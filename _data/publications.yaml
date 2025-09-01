@@ -1,5 +1,5 @@
 papers:
-  - title: "[P1] Learning to Generate Unit Test via Adversarial Reinforcement Learning"
+  - title: "[P3] Learning to Generate Unit Test via Adversarial Reinforcement Learning"
     authors: "<b><u>Dongjun Lee</u></b>, <a href='https://chhwang.github.io'>Changho Hwang</a>, <a href='https://sites.google.com/view/kiminlee/'>Kimin Lee</a>"
     venue: "Preprint"
     code: "https://github.com/dgjun32/UTRL"
@@ -10,6 +10,11 @@ papers:
     authors: "<a href='https://yangyongjin.github.io/'>Yongjin Yang</a>, Sinjae Kang, <a href='https://jylee425.github.io/'>Juyong Lee</a>, <b><u>Dongjun Lee</u></b>, <a href='https://fbsqkd.github.io/'>Seyoung Yun</a>, <a href='https://sites.google.com/view/kiminlee/'>Kimin Lee</a>"
     venue: "Preprint"
     arxiv: "https://arxiv.org/abs/2506.04287"
+    selected: y
+
+  - title: "[P1] Adversarial Iterative Unit Test Generation with Large Language Models"
+    authors: "<b><u>Dongjun Lee</u></b>, <a href='https://jylee425.github.io/'>Juyong Lee</a>, <a href='https://chhwang.github.io'>Changho Hwang</a>, <a href='https://sites.google.com/view/kiminlee/'>Kimin Lee</a>"
+    venue: "Preprint"
     selected: y
 
   - title: "[C2] Learning to Contextualize Web Pages for Enhanced Decision Making by LLM Agents"

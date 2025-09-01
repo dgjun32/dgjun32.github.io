@@ -14,7 +14,7 @@ papers:
 
   - title: "[P1] Adversarial Iterative Unit Test Generation with Large Language Models"
     authors: "<b><u>Dongjun Lee</u></b>, <a href='https://jylee425.github.io/'>Juyong Lee</a>, <a href='https://chhwang.github.io'>Changho Hwang</a>, <a href='https://sites.google.com/view/kiminlee/'>Kimin Lee</a>"
-    venue: "Preprint"
+    venue: "Under Review"
     selected: y
 
   - title: "[C2] Learning to Contextualize Web Pages for Enhanced Decision Making by LLM Agents"

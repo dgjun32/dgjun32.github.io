@@ -1,14 +1,14 @@
 papers:
   - title: "[P3] Learning to Generate Unit Test via Adversarial Reinforcement Learning"
     authors: "<b><u>Dongjun Lee</u></b>, <a href='https://chhwang.github.io'>Changho Hwang</a>, <a href='https://sites.google.com/view/kiminlee/'>Kimin Lee</a>"
-    venue: "Preprint"
+    venue: "Arxiv Preprint"
     code: "https://github.com/dgjun32/UTRL"
     arxiv: "https://arxiv.org/abs/2508.21107"
     selected: y
 
   - title: "[P2] Automated Skill Discovery for Language Agents through Exploration and Iterative Feedback"
     authors: "<a href='https://yangyongjin.github.io/'>Yongjin Yang</a>, Sinjae Kang, <a href='https://jylee425.github.io/'>Juyong Lee</a>, <b><u>Dongjun Lee</u></b>, <a href='https://fbsqkd.github.io/'>Seyoung Yun</a>, <a href='https://sites.google.com/view/kiminlee/'>Kimin Lee</a>"
-    venue: "Preprint"
+    venue: "Arxiv Preprint"
     arxiv: "https://arxiv.org/abs/2506.04287"
     selected: y
 

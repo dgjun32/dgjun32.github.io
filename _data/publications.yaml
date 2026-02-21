@@ -1,4 +1,9 @@
 papers:
+  - title: "[C4] Learning Multi-View Spatial Reasoning from Cross-View Relations"
+    authors: "Suchae Jeong, Jaehwi Song, Haeone Lee, Hanna Kim, Jian Kim, <u>Dongjun Lee</u>, Dongkyu Shin, Changyeon Kim, Dongyoon Hahm, Woogyeol Jin, Juheon Choi, Kimin Lee"
+    venue: "Computer Vision and Pattern Recognition (CVPR), 2026"
+    selected: y
+
   - title: "[C3] Learning to Generate Unit Test via Adversarial Reinforcement Learning"
     authors: "<b><u>Dongjun Lee</u></b>, <a href='https://chhwang.github.io'>Changho Hwang</a>, <a href='https://sites.google.com/view/kiminlee/'>Kimin Lee</a>"
     venue: "International Conference on Learning Representations (ICLR), 2026"

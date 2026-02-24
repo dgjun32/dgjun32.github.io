@@ -27,14 +27,14 @@ papers:
     selected: y
 
   - title: "[P3] Collaborative LLM Inference via Planning for Efficient Reasoning"
-    authors: "Byeongchan Lee, Jonghoon Lee, Dongyoung Kim, Jaehyung Kim, Kyungjoon Park, <b><u>Dongjun Lee</u></b>, Jinwoo Shin"
+    authors: "<a>Byeongchan Lee</a>, <a>Jonghoon Lee</a>, <a>Dongyoung Kim</a>, <a>Jaehyung Kim</a>, <a>Kyungjoon Park</a>, <b><u>Dongjun Lee</u></b>, <a>Jinwoo Shin</a>"
     venue: "Arxiv Preprint"
     arxiv: "https://arxiv.org/abs/2506.11578"
     selected: y
 
 
   - title: "[P2] Automated Skill Discovery for Language Agents through Exploration and Iterative Feedback"
-    authors: "<a href='https://yangyongjin.github.io/'>Yongjin Yang</a>, Sinjae Kang, <a href='https://jylee425.github.io/'>Juyong Lee</a>, <b><u>Dongjun Lee</u></b>, <a href='https://fbsqkd.github.io/'>Seyoung Yun</a>, <a href='https://sites.google.com/view/kiminlee/'>Kimin Lee</a>"
+    authors: "<a href='https://yangyongjin.github.io/'>Yongjin Yang</a>, <a href='https://sinjae.me'>Sinjae Kang</a>, <a href='https://jylee425.github.io/'>Juyong Lee</a>, <b><u>Dongjun Lee</u></b>, <a href='https://fbsqkd.github.io/'>Seyoung Yun</a>, <a href='https://sites.google.com/view/kiminlee/'>Kimin Lee</a>"
     venue: "Arxiv Preprint"
     arxiv: "https://arxiv.org/abs/2506.04287"
     selected: y

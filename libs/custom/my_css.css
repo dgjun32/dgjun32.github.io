@@ -1,5 +1,12 @@
 h4 {
   letter-spacing: .1rem; }
+.theme-toggle {
+  margin-left: 12px;
+  height: 28px;
+  padding: 0 16px;
+  font-size: 10px;
+  line-height: 28px;
+}
 .container {
   max-width: 800px; }
 .header {
@@ -195,4 +202,120 @@ h4 {
   .popover-link:hover,
   .popover-item:first-child .popover-link:hover:after {
     border-bottom-color: #33C3F0; }
+}
+
+/* ================ Theme toggle ================ */
+:root {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --text: #222222;
+  --muted: rgba(0, 0, 0, 0.6);
+  --border: #eeeeee;
+  --link: #1772d0;
+  --link-hover: #f09228;
+  --button-border: #375d72;
+  --button-text: #375d72;
+  --accent: #33C3F0;
+}
+
+html[data-theme="dark"] {
+  --bg: #0f1316;
+  --surface: #141a1f;
+  --text: #e7edf2;
+  --muted: rgba(231, 237, 242, 0.7);
+  --border: #2a333b;
+  --link: #7bb7ff;
+  --link-hover: #ffd18a;
+  --button-border: #7bb7ff;
+  --button-text: #d7ecff;
+  --accent: #7bb7ff;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+a {
+  color: var(--link);
+}
+
+a:focus,
+a:hover {
+  color: var(--link-hover);
+}
+
+.main-description .fa {
+  color: var(--muted);
+}
+
+.docs-section {
+  border-top: 1px solid var(--border);
+}
+
+.footer {
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+}
+
+.paper .button,
+.theme-toggle.button {
+  border-color: var(--button-border);
+  color: var(--button-text);
+  background: transparent;
+}
+
+.paper .button:hover,
+.paper .button:focus,
+.theme-toggle.button:hover,
+.theme-toggle.button:focus {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.navbar,
+.navbar-spacer,
+.popover {
+  background: var(--surface);
+}
+
+.navbar,
+.navbar-spacer {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.navbar-link,
+.popover-link {
+  color: var(--text);
+}
+
+.navbar-link.active {
+  color: var(--accent);
+}
+
+.popover {
+  border: 1px solid var(--border);
+}
+
+.popover-link {
+  border-bottom: 1px solid var(--border);
+}
+
+.popover-item:first-child .popover-link:after {
+  border-bottom-color: var(--surface);
+}
+
+.popover-item:first-child .popover-link:before {
+  border-bottom-color: var(--border);
+}
+
+.popover-link:hover {
+  color: var(--surface);
+  background: var(--accent);
+}
+
+.popover-link:hover,
+.popover-item:first-child .popover-link:hover:after {
+  border-bottom-color: var(--accent);
 }

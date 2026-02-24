@@ -1,11 +1,13 @@
 $(document).ready(function() {
 
   // Variables
-  var $codeSnippets = $('.code-example-body'),
+    var $codeSnippets = $('.code-example-body'),
       $nav = $('.navbar'),
       $body = $('body'),
       $window = $(window),
       $popoverLink = $('[data-popover]'),
+      $themeToggle = $('.theme-toggle'),
+      themeStorageKey = 'theme-preference',
       navOffsetTop = $nav.offset().top,
       $document = $(document),
       entityMap = {
@@ -18,11 +20,13 @@ $(document).ready(function() {
       }
 
   function init() {
+    initTheme();
     $window.on('scroll', onScroll)
     $window.on('resize', resize)
     $popoverLink.on('click', openPopover)
     $document.on('click', closePopover)
     $('a[href^="#"]').on('click', smoothScroll)
+    $themeToggle.on('click', toggleTheme)
     buildSnippets();
   }
 
@@ -86,6 +90,37 @@ $(document).ready(function() {
       var newContent = escapeHtml($(this).html())
       $(this).html(newContent)
     })
+  }
+
+  function getStoredTheme() {
+    try {
+      return localStorage.getItem(themeStorageKey);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    if ($themeToggle.length) {
+      $themeToggle.text(theme === 'dark' ? 'Light' : 'Dark');
+    }
+  }
+
+  function initTheme() {
+    var storedTheme = getStoredTheme();
+    applyTheme(storedTheme ? storedTheme : 'light');
+  }
+
+  function toggleTheme() {
+    var current = document.documentElement.getAttribute('data-theme') || 'light';
+    var nextTheme = current === 'dark' ? 'light' : 'dark';
+    try {
+      localStorage.setItem(themeStorageKey, nextTheme);
+    } catch (e) {
+      // ignore storage errors
+    }
+    applyTheme(nextTheme);
   }
 
 

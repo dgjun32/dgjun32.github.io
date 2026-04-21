@@ -457,7 +457,7 @@
         </div>
 
         <p class="hero-tagline">
-          Training an LLM to write high-quality unit tests — <b>without any ground-truth unit test labels</b> — by pitting a test generator and a code generator against each other in an adversarial RL loop.
+          Training an LLM to write high-quality unit tests — <b>without any ground-truth unit test labels</b> — by competing a test generator and a code generator against each other in an adversarial RL loop.
         </p>
 
         <div class="paper-btn-parent">
@@ -581,13 +581,13 @@
                 <b>Over base model:</b> Best-of-N code score on Qwen3-8B jumps from <span class="hl">0.430</span> → <span class="hl">0.578</span> (+34%). Code accuracy: <span class="hl">9.8% → 14.9%</span>.
               </li>
               <li>
-                <b>Over frontier LLMs:</b> UTRL-4B unit tests beat <span class="hl">GPT-4.1 (0.537)</span> and <span class="hl">GPT-4o (0.474)</span> — despite being 4B parameters.
+                <b>Over frontier LLMs:</b> UTRL-4B unit tests beats <span class="hl">GPT-4.1</span> and <span class="hl">GPT-4o</span> — despite being 4B parameters.
               </li>
               <li>
                 <b>Over SFT baselines:</b> SFT on human-written unit tests reaches 0.458 Best-of-N score, and SFT on teacher-distilled reasoning+tests still lags behind. RL generalizes where SFT memorizes.
               </li>
               <li>
-                <b>Unit test fidelity:</b> UTRL-4B reaches <span class="hl">0.794</span>, and UTRL-14B reaches <span class="hl">0.827</span> — both surpassing GPT-4.1 (0.800) and far above SFT-with-GT-tests (0.566).
+                <b>Unit test fidelity:</b> UTRL-4B reaches <span class="hl">0.794</span>, and UTRL-14B reaches <span class="hl">0.827</span> — matching or surpassing GPT-4.1 (0.800) and far above SFT-with-GT-tests (0.566).
               </li>
             </ul>
             <figure>
@@ -648,10 +648,10 @@
                 <b>Drop R_valid entirely:</b> the generator emits tests where <span class="hl-warn">&gt;50% are functionally invalid</span>. Discrimination reward stays high but tests are unreliable as evaluators.
               </li>
               <li>
-                <b>Keep R_valid but remove clipping:</b> the generator collapses — it learns to emit only the <span class="hl-warn">2–3 trivial test cases</span> visible in the problem statement to trivially maximize the validity ratio. Coverage dies.
+                <b>Keep R_valid but remove clipping:</b> the unit test generator collapses — it learns to emit only the <span class="hl-warn">2–3 trivial test cases</span> to trivially maximize the validity ratio. Coverage dies.
               </li>
               <li>
-                <b>Clipped validity (τ = 12):</b> forces the model to keep producing enough tests that a high validity ratio actually reflects real reasoning effort. This is what unlocks the full curriculum.
+                <b>Clipped validity (τ = 12):</b> forces the model to keep producing enough tests that a high validity ratio actually reflects real reasoning effort.
               </li>
             </ul>
             <figure>
@@ -692,12 +692,12 @@
         <!-- Q5 · Generalization to other LLM families -->
         <div class="q-card">
           <div class="q-head">
-            <div class="q-tag">Q5 · Generalization</div>
-            <div class="q-title">Does UTRL work on LLM families beyond Qwen?</div>
+            <div class="q-tag">Q5 · Does UTRL work on other LLM families?</div>
+            <div class="q-title">It also works when applied to Llama-3.1-8B-Instruct</div>
           </div>
           <div class="q-body">
             <p class="q-answer">
-              <b>Yes.</b> UTRL transfers to Llama-3.1-8B-Instruct with only 50 training steps, lifting its unit test quality well above the instruction-tuned baseline.
+              <b>Yes.</b> UTRL effectively improves Llama-3.1-8B-Instruct with only 50 training steps, lifting its unit test quality well above the instruction-tuned baseline.
             </p>
             <ul class="q-points">
               <li>

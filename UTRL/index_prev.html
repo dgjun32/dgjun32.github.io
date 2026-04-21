@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      b {
+        color: royalblue;
+        font-weight: 700;
+      }
+      .paper-btn-parent {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        justify-content: center;
+        max-width: 480px;
+        margin: 16px auto;
+      }
+      .paper-btn-parent .paper-btn {
+        font-size: 14px !important;
+        white-space: nowrap;
+        text-align: center;
+        justify-content: center;
+        padding: 6px 10px !important;
+      }
+    </style>
+    <title>
+      Learning to Generate Unit Test via Adversarial Reinforcement Learning
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <meta
+      name="description"
+      content="We propose a novel adversarial reinforcement learning framework to generate high-quality unit tests for code language models."
+    />
+    <meta
+      name="author"
+      content="Dongjun Lee, Changho Hwang, Kimin Lee"
+    />
+    <meta
+      property="og:title"
+      content="Learning to Generate Unit Test via Adversarial Reinforcement Learning"
+    />
+    <meta
+      property="og:description"
+      content="We propose a novel adversarial reinforcement learning framework to generate high-quality unit tests for code language models."
+    />
+    <meta
+      name="twitter:title"
+      content="Learning to Generate Unit Test via Adversarial Reinforcement Learning"
+    />
+    <meta
+      name="twitter:description"
+      content="We propose a novel adversarial reinforcement learning framework to generate high-quality unit tests for code language models."
+    />
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="paper-title">
+        <h1>
+          Learning to Generate Unit Test via Adversarial Reinforcement Learning
+        </h1>
+      </div>
+
+      <div class="venue">
+        ICLR 2026
+      </div>
+
+      <div id="authors">
+        <center>
+          <div class="author-row-new">
+            <a href="#">Dongjun Lee<sup>1</sup></a>,
+            <a href="#">Changho Hwang<sup>2</sup></a>,
+            <a href="#">Kimin Lee<sup>1,†</sup></a>
+          </div>
+        </center>
+        <center>
+          <div class="affiliations"><span><sup>1</sup>KAIST</span>&nbsp;&nbsp;&nbsp;<span><sup>2</sup>Microsoft Research</span>&nbsp;&nbsp;&nbsp;</div>
+        </center>
+        <center>
+          <div class="paper-btn-parent">
+            <a
+              href="https://arxiv.org/abs/2508.21107"
+              class="paper-btn arxiv-btn"
+              target="_blank"
+            >
+              <i class="fas fa-file-alt"></i> arXiv
+            </a>
+            <a
+              href="https://github.com/dgjun32/UTRL"
+              class="paper-btn code-btn"
+              target="_blank"
+            >
+              <i class="fas fa-code"></i> Code
+            </a>
+            <a
+              href="https://huggingface.co/datasets/dgjun32/UTRL_TRAINING"
+              class="paper-btn dataset-btn"
+              target="_blank"
+            >
+              <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" style="height:1em;vertical-align:middle;margin-right:4px;"> Training Data
+            </a>
+            <a
+              href="https://huggingface.co/datasets/dgjun32/UTRL_TACO_EVAL"
+              class="paper-btn model-btn"
+              target="_blank"
+            >
+              <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" style="height:1em;vertical-align:middle;margin-right:4px;"> Evaluation Data
+            </a>
+            <a
+              href="https://huggingface.co/dgjun32/UTRL-4B"
+              class="paper-btn model-btn"
+              target="_blank"
+            >
+              <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" style="height:1em;vertical-align:middle;margin-right:4px;"> UTRL-4B
+            </a>
+            <a
+              href="https://huggingface.co/dgjun32/UTRL-Codegen-4B"
+              class="paper-btn model-btn"
+              target="_blank"
+            >
+              <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" style="height:1em;vertical-align:middle;margin-right:4px;"> UTRL-Codegen-4B
+            </a>
+          </div>
+        </center>
+      </div>
+
+      <section>
+        <h2 style="padding-top: 0px">Overview</h2>
+        <hr />
+
+        <p>
+          Unit testing is a core practice in programming, enabling systematic evaluation of programs produced by human developers or large language models (LLMs).
+          Given the challenges in writing comprehensive unit tests, LLMs have been employed to automate unit test generation, yet methods for training LLMs to produce high-quality unit tests remain underexplored.
+        </p>
+        <p>
+          High-quality tests must do more than execute successfully: they should detect subtle faults
+          and reliably separate better code solutions from near-correct ones.
+          Therefore, unit test generation is an open-ended task with no single fixed answer.
+          Moreover, while code solutions can be collected at large scale from diverse LLM instruction-tuning datasets,
+          <strong style="font-weight: 500">high-quality unit tests</strong> are typically not available at scale.
+        </p>
+        <p>
+          If we can reliably define rewards for arbitrary unit tests, RL can be more suitable for training LLMs for unit test generation
+          than learning to imitate reference unit tests.
+          Based on this idea, we propose <strong style="font-weight: 500">UTRL</strong>, an adversarial reinforcement learning framework in which
+          a unit test generator and a code generator are trained to provide reliable reward signals to each other.
+        </p>
+      </section>
+
+      <section>
+        <h2>Method</h2>
+        <hr />
+
+        <p>
+          Our key insight is on defining rewards for unit test generation based on relationships between unit test generation and code generation.
+        </p>
+        <p>
+          In perspective of a code generation, the generated code should pass entire test cases in the unit test. Otherwise, in perspective of a unit test generation,
+          the generated unit test should be able to detect subtle errors in arbitrary code solutions, and at the same time, each test case in the unit test should be functionally correct and executable.
+        </p>
+        <p>
+          Inspired by this relationship, we train unit test generator and code generator in adversarial manner, where (1) the unit test generator is trained to generate unit tests that effectively reveal faults in the code solutions produced by the code generator; and (2) the code generator is trained to maximize a code reward, en-
+          couraging it to produce solutions that pass the unit tests generated by the unit test generator.
+          In the following section, we provide details of the rewards for training unit test generator, where we utilize the weighted sum of two reward temrs: 
+          <b>discrimination reward</b> and <b>validity reward</b>.
+        </p>
+
+        <h3>Discrimination reward</h3>
+        <p>
+          This reward measures whether generated unit tests can distinguish generated code solutions
+          (sampled from a code generator LLM) from ground-truth solutions. In short, it quantifies
+          how well tests expose subtle errors across multiple candidate code solutions generated by code generator LLMs.
+        </p>
+        <p>
+          Example figure below illustrates the process of computing discrimination reward w.r.t generated unit test.
+          The unit test consists of multiple test cases (5 test cases in the example), and each test case is executed against ground-truth code solution C*.
+          If a test case passes under the ground-truth code solution (test case 1, 3, 5 in the example), it is considered a valid test case. 
+          Otherwise, it is considered as a faulty test case (test case 2, 4 in the example), and it is discarded for discrimination reward computation.
+          As a next step, discrimination reward computes how many LLM-generated code solutions (C1 ~ C6 in the example) are failed by at least one valid test case (test case 1, 3, 5 in the example) in the unit test.
+          In the figure, as C1, C3, C4, C5 are failed by at least one valid test case, discrimination reward is computed as 4/6.
+        </p>
+        <figure class="figure" style="text-align: center">
+          <img
+            src="assets/imgs/discrimination_reward.png"
+            alt="Discrimination reward"
+            style="max-width: 85%; height: auto; margin-top: 0.75em; margin-bottom: 0em"
+          />
+          <figcaption class="caption" style="text-align: center">
+            Discrimination reward illustration.
+          </figcaption>
+        </figure>
+
+        <h3>Validity reward</h3>
+        <p>
+          This reward measures how many generated test cases are functionally correct.
+          It is computed by executing each test cases in the generated unit tests against the ground-truth code solution, and checking whether the test case can be executed successfully without runtime errors and failed assertions.
+          This reward encourages the unit test generator to produce functionally correct and executable test cases, which are essential for reliable code evaluation.
+        </p>
+        <p>
+          However, we observe that defining validity reward as the ratio of valid test cases among the entire test cases leads to bias the model to generate unit tests with small number of valid test cases (e.g., 2~3 trivial test cases provided in the problem description).
+          Therefore, we introduce additional clipping term in computing validity reward.
+          Specifically, We clip the denominator of the validity reward, which ensures that unit tests with fewer than specific number of (\tau) test cases receive a validity reward proportional to the absolute number of valid test cases,
+          thereby preventing the unit tests with a small number of trivial test cases from receiving high validity rewards.
+        </p>
+        <figure class="figure" style="text-align: center">
+          <img
+            src="assets/imgs/validity_reward.png"
+            alt="Validity reward"
+            style="max-width: 50%; height: auto; margin-top: 0.75em; margin-bottom: 0em"
+          />
+          <figcaption class="caption" style="text-align: center">
+            Design of the validity reward.
+          </figcaption>
+        </figure>
+
+        <h3>UTRL</h3>
+        <p>
+          Based on these rewards, we alternate between training the unit test generator and the code generator. Unit test generator is optimized to maximize the weighted sum of 
+          discrimination and validity rewards, while code generator is optimized to generated code solutions that can pass the unit tests generated by the unit test generator.
+        </p>
+        <figure class="figure" style="text-align: center">
+          <img
+            src="assets/imgs/algorithm_table.png"
+            alt="UTRL training algorithm table"
+            style="max-width: 85%; height: auto; margin-top: 0.75em; margin-bottom: 0em"
+          />
+          <figcaption class="caption" style="text-align: center">
+            UTRL training algorithm table
+          </figcaption>
+        </figure>
+        <p>
+          By repeating these steps, the code generator produces more higher-quality (near perfect) code solutions, which in turn provide more challenging discrimination task for the unit test generator,
+          rendering the unit test generator learn to generate more higher-quality unit tests.
+        </p>
+      </section>
+
+      <section>
+        <h2>Evaluation Metrics</h2>
+        <hr />
+
+        <p>
+          Ultimately, the quality of a unit test should be judged by how well it captures subtly faulty code.
+          Well-known proxy metrics such as Line Coverage and Mutation Score are useful, but they mainly reflect whether tests touch specific execution paths.
+          They are limited in evaluating whether a test can catch highly subtle failures, such as code solutions that still pass more than 90% of oracle test cases.
+          To enable a more thorough evaluation of generated unit tests, we propose two metrics for LLM-generated unit tests.
+        </p>
+
+        <h3>1. Best-of-N Improvement</h3>
+        <p>
+          We sample candidate code solutions with diverse code LLMs (Qwen3-4B, 8B, 14B, GPT-4o)
+          using 32-shot generation. For each task, we use generated unit tests to select a single best candidate,
+          then evaluate that selected code with human-curated oracle unit tests.
+          This metric captures how well generated tests identify high-quality solutions in practice.
+        </p>
+
+        <h3>2. Unit Test Fidelity</h3>
+        <p>
+          Unit Test Fidelity measures alignment between scores induced by generated unit tests
+          and scores induced by human-curated unit tests.
+          For each problem, we collect score vectors over hundreds of sampled code solutions,
+          then compute Spearman's \(R\) between the oracle-score vector and the generated-test score vector.
+          Higher correlation indicates that generated tests induce code evaluation behavior closer to oracle tests.
+        </p>
+      </section>
+
+      <section>
+        <h2>Key Results</h2>
+        <hr />
+        <figure class="figure" style="text-align: center">
+          <img
+            src="assets/imgs/best_of_n_improvement.png"
+            alt="Best-of-N improvement"
+            style="max-width: 85%; height: auto; margin-top: 0.75em; margin-bottom: 0em"
+          />
+          <figcaption class="caption" style="text-align: center">
+            Best-of-N improvement.
+          </figcaption>
+        </figure>
+
+        <figure class="figure" style="text-align: center">
+          <img
+            src="assets/imgs/code_generation.png"
+            alt="Code generation improvement with UTRL-generated unit tests"
+            style="max-width: 40%; height: auto; margin-top: 0.75em; margin-bottom: 0em"
+          />
+          <figcaption class="caption" style="text-align: center">
+            Code generation improvement using UTRL-generated unit tests.
+          </figcaption>
+        </figure>
+        <ul>
+          <li>
+            <strong>UTRL surpasses supervised fine-tuning:</strong>
+            Models trained with UTRL (without ground-truth unit tests) generate higher-quality unit tests
+            than models trained with SFT using ground-truth unit tests, showing that learning to detect
+            LLM-generated code solutions is more effective than directly imitating reference tests.
+          </li>
+          <li>
+            <strong>Small models trained via UTRL outperform large closed-source models:</strong>
+            Qwen3-4B trained with UTRL generates higher-quality unit tests than GPT-4o and GPT-4.1,
+            achieving <strong>14.9% accuracy</strong> versus GPT-4o's 10.6% and GPT-4.1's 13.7%
+            (when evaluating Qwen3-8B code generation).
+          </li>
+          <li>
+            <strong>Unit tests from small UTRL models improve larger code generators:</strong>
+            Unit tests generated by UTRL-trained 4B models effectively improve code generation performance
+            of much larger models (e.g., 8B, 14B, and GPT-4o).
+          </li>
+          <li>
+            <strong>Co-evolving test generation and code generation:</strong>
+            When we use unit tests generated by the UTRL-trained unit test generator to run RL for code generation,
+            code generation performance improves substantially. Notably, this setup outperforms code-generation RL
+            trained with unit tests generated by GPT-4o.
+          </li>
+
+        </ul>
+
+        <p>
+          Please check our <a href="https://arxiv.org/abs/2508.21107" target="_blank">paper</a> for more details.
+        </p>
+      </section>
+
+      <section>
+        <h2>BibTeX</h2>
+        <hr />
+        <div id="bibtex">
+          <pre>
+@article{lee2025learning,
+  title={Learning to generate unit test via adversarial reinforcement learning},
+  author={Lee, Dongjun and Hwang, Changho and Lee, Kimin},
+  journal={arXiv preprint arXiv:2508.21107},
+  year={2025}
+}
+          </pre>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

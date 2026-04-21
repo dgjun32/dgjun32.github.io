@@ -11,345 +11,683 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
-    <style>
-      b {
-        color: royalblue;
-        font-weight: 700;
-      }
-      .paper-btn-parent {
-        display: grid !important;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
-        justify-content: center;
-        max-width: 480px;
-        margin: 16px auto;
-      }
-      .paper-btn-parent .paper-btn {
-        font-size: 14px !important;
-        white-space: nowrap;
-        text-align: center;
-        justify-content: center;
-        padding: 6px 10px !important;
-      }
-    </style>
     <title>
-      Learning to Generate Unit Test via Adversarial Reinforcement Learning
+      UTRL · Learning to Generate Unit Test via Adversarial Reinforcement Learning
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-    />
     <link rel="stylesheet" href="assets/css/main.css" />
     <meta
       name="description"
-      content="We propose a novel adversarial reinforcement learning framework to generate high-quality unit tests for code language models."
+      content="UTRL: an adversarial RL framework that trains an LLM to generate high-quality unit tests without unit-test labels."
     />
-    <meta
-      name="author"
-      content="Dongjun Lee, Changho Hwang, Kimin Lee"
-    />
+    <meta name="author" content="Dongjun Lee, Changho Hwang, Kimin Lee" />
     <meta
       property="og:title"
-      content="Learning to Generate Unit Test via Adversarial Reinforcement Learning"
+      content="UTRL: Learning to Generate Unit Test via Adversarial Reinforcement Learning"
     />
     <meta
       property="og:description"
-      content="We propose a novel adversarial reinforcement learning framework to generate high-quality unit tests for code language models."
+      content="An adversarial RL framework where a unit test generator and a code generator co-evolve, without ground-truth unit tests."
     />
     <meta
       name="twitter:title"
-      content="Learning to Generate Unit Test via Adversarial Reinforcement Learning"
+      content="UTRL: Learning to Generate Unit Test via Adversarial Reinforcement Learning"
     />
     <meta
       name="twitter:description"
-      content="We propose a novel adversarial reinforcement learning framework to generate high-quality unit tests for code language models."
+      content="An adversarial RL framework where a unit test generator and a code generator co-evolve, without ground-truth unit tests."
     />
+    <style>
+      :root {
+        --ink: #1a2530;
+        --ink-soft: #4a5864;
+        --ink-mute: #6a7884;
+        --line: #e5e8ec;
+        --line-soft: #f0f2f5;
+        --bg: #ffffff;
+        --bg-soft: #f7f9fb;
+        --accent: #2a7f7f;
+        --accent-soft: #e3f0ef;
+        --accent-deep: #1f5e5e;
+        --warn: #c8663b;
+        --gold: #b8893a;
+      }
+
+      html, body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+        font-weight: 400;
+        font-size: 17px;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .container {
+        max-width: 860px;
+      }
+
+      /* ===== HERO ===== */
+      .hero {
+        padding: 48px 0 28px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .hero-eyebrow {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--accent);
+        text-align: center;
+        margin-bottom: 14px;
+      }
+      .hero h1 {
+        font-size: 38px;
+        font-weight: 500;
+        line-height: 1.2;
+        text-align: center;
+        letter-spacing: -0.01em;
+        color: var(--ink);
+        margin: 0 0 18px 0;
+      }
+      .hero-tagline {
+        text-align: center;
+        font-size: 17px;
+        color: var(--ink-soft);
+        max-width: 680px;
+        margin: 0 auto 26px auto;
+        line-height: 1.55;
+      }
+      .hero-tagline b {
+        color: var(--accent-deep);
+        font-weight: 600;
+      }
+      .venue {
+        font-size: 15px;
+        text-align: center;
+        margin-bottom: 18px;
+        color: var(--ink-mute);
+        font-weight: 500;
+        letter-spacing: 0.04em;
+      }
+      .venue .venue-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border: 1px solid var(--accent);
+        color: var(--accent-deep);
+        border-radius: 999px;
+        font-size: 12px;
+        font-family: "JetBrains Mono", monospace;
+        letter-spacing: 0.08em;
+      }
+
+      .author-row-new {
+        text-align: center;
+        margin: 8px 0 4px 0;
+      }
+      .author-row-new a {
+        font-size: 17px;
+        font-weight: 500;
+        color: var(--ink);
+        padding: 2px 6px;
+      }
+      .author-row-new a:hover { color: var(--accent); }
+      .author-row-new sup { font-size: 11px; color: var(--ink-mute); font-weight: 400; }
+      .affiliations {
+        font-size: 14px;
+        text-align: center;
+        color: var(--ink-mute);
+        margin: 4px auto 22px auto;
+      }
+
+      /* ===== BUTTONS ===== */
+      .paper-btn-parent {
+        display: flex !important;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+        max-width: 700px;
+        margin: 8px auto 0 auto;
+      }
+      .paper-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 13px !important;
+        font-size: 13px !important;
+        font-weight: 500;
+        color: var(--ink) !important;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        text-decoration: none;
+        transition: all 0.15s ease;
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+        white-space: nowrap;
+      }
+      .paper-btn:hover {
+        background: var(--accent-soft);
+        border-color: var(--accent);
+        color: var(--accent-deep) !important;
+        transform: translateY(-1px);
+      }
+      .paper-btn i { margin-right: 6px; color: var(--accent); }
+
+      /* ===== TL;DR ===== */
+      .tldr {
+        margin: 40px 0 16px 0;
+        padding: 24px 26px;
+        background: var(--bg-soft);
+        border-left: 3px solid var(--accent);
+        border-radius: 4px;
+      }
+      .tldr-label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--accent-deep);
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+      .tldr-body {
+        font-size: 17px;
+        line-height: 1.6;
+        color: var(--ink);
+      }
+      .tldr-body b {
+        color: var(--accent-deep);
+        font-weight: 600;
+      }
+
+      /* ===== STAT GRID ===== */
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin: 20px 0 10px 0;
+      }
+      .stat-card {
+        padding: 16px 18px;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+      }
+      .stat-num {
+        font-family: "IBM Plex Sans", sans-serif;
+        font-size: 28px;
+        font-weight: 500;
+        color: var(--accent-deep);
+        letter-spacing: -0.02em;
+        line-height: 1;
+        margin-bottom: 6px;
+      }
+      .stat-label {
+        font-size: 12.5px;
+        color: var(--ink-mute);
+        line-height: 1.4;
+      }
+      @media (max-width: 700px) {
+        .stat-grid { grid-template-columns: 1fr; }
+      }
+
+      /* ===== SECTIONS ===== */
+      section {
+        margin: 56px 0 0 0;
+        text-align: left;
+      }
+      h2 {
+        font-size: 24px;
+        font-weight: 500;
+        color: var(--ink);
+        margin: 0 0 4px 0;
+        padding-top: 0;
+        letter-spacing: -0.005em;
+      }
+      h2 .h2-num {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        color: var(--accent);
+        margin-right: 10px;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+      }
+      h3 {
+        font-size: 17px;
+        font-weight: 600;
+        color: var(--ink);
+        margin: 28px 0 8px 0;
+      }
+      hr {
+        height: 1px;
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 0 0 20px 0;
+      }
+      p { line-height: 1.6; color: var(--ink); }
+      p b, strong { color: var(--accent-deep); font-weight: 600; }
+
+      /* ===== FIGURES ===== */
+      figure {
+        margin: 18px 0;
+        text-align: center;
+      }
+      figure img {
+        max-width: 100%;
+        height: auto;
+      }
+      .caption {
+        font-size: 13.5px;
+        color: var(--ink-mute);
+        margin-top: 8px;
+        line-height: 1.45;
+      }
+
+      /* ===== Q-CARDS (experiments) ===== */
+      .q-card {
+        margin: 28px 0;
+        padding: 0;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow: hidden;
+        background: var(--bg);
+      }
+      .q-head {
+        padding: 16px 22px;
+        background: var(--bg-soft);
+        border-bottom: 1px solid var(--line);
+      }
+      .q-tag {
+        display: inline-block;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--accent);
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+      .q-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--ink);
+        line-height: 1.4;
+        margin: 0;
+      }
+      .q-body {
+        padding: 20px 22px 22px 22px;
+      }
+      .q-answer {
+        font-size: 16.5px;
+        color: var(--ink);
+        line-height: 1.6;
+        margin: 0 0 14px 0;
+      }
+      .q-answer b { color: var(--accent-deep); }
+      .q-points {
+        margin: 12px 0 0 0;
+        padding: 0;
+        list-style: none;
+      }
+      .q-points li {
+        position: relative;
+        padding: 4px 0 4px 22px;
+        font-size: 15.5px;
+        color: var(--ink-soft);
+        line-height: 1.55;
+      }
+      .q-points li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 14px;
+        width: 12px;
+        height: 2px;
+        background: var(--accent);
+      }
+      .q-points li b { color: var(--ink); font-weight: 600; }
+
+      /* highlight numbers inline */
+      .hl {
+        display: inline-block;
+        background: var(--accent-soft);
+        color: var(--accent-deep);
+        padding: 1px 7px;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 0.96em;
+        font-family: "JetBrains Mono", monospace;
+        letter-spacing: -0.01em;
+      }
+      .hl-warn {
+        display: inline-block;
+        background: #fbe8df;
+        color: var(--warn);
+        padding: 1px 7px;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 0.96em;
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      /* ===== METHOD panel ===== */
+      .method-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin: 18px 0 10px 0;
+      }
+      .method-col {
+        padding: 18px 20px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--bg);
+      }
+      .method-col h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--accent-deep);
+        margin: 0 0 8px 0;
+        font-family: "JetBrains Mono", monospace;
+        letter-spacing: 0.04em;
+      }
+      .method-col p {
+        font-size: 14.5px;
+        color: var(--ink-soft);
+        margin: 0;
+        line-height: 1.55;
+      }
+      @media (max-width: 700px) {
+        .method-grid { grid-template-columns: 1fr; }
+      }
+
+      /* ===== BibTeX ===== */
+      #bibtex pre {
+        font-size: 13px;
+        background: var(--bg-soft);
+        border: 1px solid var(--line);
+        padding: 16px 20px;
+        border-radius: 6px;
+        color: var(--ink);
+        line-height: 1.5;
+        overflow-x: auto;
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      /* ===== FOOTER ===== */
+      footer {
+        margin: 64px 0 32px 0;
+        padding-top: 20px;
+        border-top: 1px solid var(--line);
+        text-align: center;
+        font-size: 13px;
+        color: var(--ink-mute);
+      }
+
+      @media (max-width: 700px) {
+        .hero h1 { font-size: 28px; }
+        .hero { padding: 32px 0 20px 0; }
+        section { margin-top: 40px; }
+      }
+    </style>
   </head>
 
   <body>
     <div class="container">
-      <div class="paper-title">
+      <!-- ===== HERO ===== -->
+      <div class="hero">
+        <div class="hero-eyebrow">UTRL · ICLR 2026</div>
         <h1>
-          Learning to Generate Unit Test via Adversarial Reinforcement Learning
+          Learning to Generate Unit Test via<br/>
+          Adversarial Reinforcement Learning
         </h1>
-      </div>
 
-      <div class="venue">
-        ICLR 2026
-      </div>
-
-      <div id="authors">
-        <center>
+        <div id="authors">
           <div class="author-row-new">
             <a href="#">Dongjun Lee<sup>1</sup></a>,
             <a href="#">Changho Hwang<sup>2</sup></a>,
-            <a href="#">Kimin Lee<sup>1,†</sup></a>
+            <a href="#">Kimin Lee<sup>1</sup></a>
           </div>
-        </center>
-        <center>
-          <div class="affiliations"><span><sup>1</sup>KAIST</span>&nbsp;&nbsp;&nbsp;<span><sup>2</sup>Microsoft Research</span>&nbsp;&nbsp;&nbsp;</div>
-        </center>
-        <center>
-          <div class="paper-btn-parent">
-            <a
-              href="https://arxiv.org/abs/2508.21107"
-              class="paper-btn arxiv-btn"
-              target="_blank"
-            >
-              <i class="fas fa-file-alt"></i> arXiv
-            </a>
-            <a
-              href="https://github.com/dgjun32/UTRL"
-              class="paper-btn code-btn"
-              target="_blank"
-            >
-              <i class="fas fa-code"></i> Code
-            </a>
-            <a
-              href="https://huggingface.co/datasets/dgjun32/UTRL_TRAINING"
-              class="paper-btn dataset-btn"
-              target="_blank"
-            >
-              <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" style="height:1em;vertical-align:middle;margin-right:4px;"> Training Data
-            </a>
-            <a
-              href="https://huggingface.co/datasets/dgjun32/UTRL_TACO_EVAL"
-              class="paper-btn model-btn"
-              target="_blank"
-            >
-              <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" style="height:1em;vertical-align:middle;margin-right:4px;"> Evaluation Data
-            </a>
-            <a
-              href="https://huggingface.co/dgjun32/UTRL-4B"
-              class="paper-btn model-btn"
-              target="_blank"
-            >
-              <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" style="height:1em;vertical-align:middle;margin-right:4px;"> UTRL-4B
-            </a>
-            <a
-              href="https://huggingface.co/dgjun32/UTRL-Codegen-4B"
-              class="paper-btn model-btn"
-              target="_blank"
-            >
-              <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" style="height:1em;vertical-align:middle;margin-right:4px;"> UTRL-Codegen-4B
-            </a>
+          <div class="affiliations">
+            <sup>1</sup>KAIST &nbsp;·&nbsp; <sup>2</sup>Microsoft Research
           </div>
-        </center>
+        </div>
+
+        <p class="hero-tagline">
+          Training an LLM to write high-quality unit tests — <b>without any ground-truth unit test labels</b> — by pitting a test generator and a code generator against each other in an adversarial RL loop.
+        </p>
+
+        <div class="paper-btn-parent">
+          <a href="https://arxiv.org/abs/2508.21107" class="paper-btn" target="_blank">
+            <i class="fas fa-file-alt"></i> arXiv
+          </a>
+          <a href="https://github.com/dgjun32/UTRL" class="paper-btn" target="_blank">
+            <i class="fas fa-code"></i> Code
+          </a>
+          <a href="https://huggingface.co/datasets/dgjun32/UTRL_TRAINING" class="paper-btn" target="_blank">
+            <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" style="height:0.95em;vertical-align:middle;margin-right:5px;"> Training Data
+          </a>
+          <a href="https://huggingface.co/datasets/dgjun32/UTRL_TACO_EVAL" class="paper-btn" target="_blank">
+            <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" style="height:0.95em;vertical-align:middle;margin-right:5px;"> Eval Data
+          </a>
+          <a href="https://huggingface.co/dgjun32/UTRL-4B" class="paper-btn" target="_blank">
+            <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" style="height:0.95em;vertical-align:middle;margin-right:5px;"> UTRL-4B
+          </a>
+          <a href="https://huggingface.co/dgjun32/UTRL-Codegen-4B" class="paper-btn" target="_blank">
+            <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" style="height:0.95em;vertical-align:middle;margin-right:5px;"> UTRL-Codegen-4B
+          </a>
+        </div>
       </div>
 
+      <!-- ===== TL;DR ===== -->
+      <div class="tldr">
+        <div class="tldr-label">TL;DR</div>
+        <div class="tldr-body">
+          A <b>unit test generator</b> learns to expose faults in code sampled from a <b>code generator</b>, while the code generator learns to pass those tests. Neither side needs human-written unit tests — the only supervision is an instruction–code pair. The result: <b>Qwen3-4B trained with UTRL produces unit tests that beat GPT-4.1 and GPT-4o</b>, and the co-trained code generator matches RL with ground-truth tests.
+        </div>
+      </div>
+
+      <!-- ===== HEADLINE STATS ===== -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-num">+34.4%</div>
+          <div class="stat-label">Best-of-N score gain over base Qwen3-4B unit tests</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">0.794</div>
+          <div class="stat-label">Unit-test fidelity — surpasses GPT-4.1 (0.800 for 14B model)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">No labels</div>
+          <div class="stat-label">Zero ground-truth unit tests used during training</div>
+        </div>
+      </div>
+
+      <!-- ===== METHOD ===== -->
       <section>
-        <h2 style="padding-top: 0px">Overview</h2>
+        <h2><span class="h2-num">01</span>Method</h2>
         <hr />
 
         <p>
-          Unit testing is a core practice in programming, enabling systematic evaluation of programs produced by human developers or large language models (LLMs).
-          Given the challenges in writing comprehensive unit tests, LLMs have been employed to automate unit test generation, yet methods for training LLMs to produce high-quality unit tests remain underexplored.
+          Collecting high-quality unit tests at scale is expensive. Instruction–code pairs are not. UTRL leverages this asymmetry: it converts an instruction–code dataset into a training signal for unit test generation through two interlocking rewards.
         </p>
+
+        <div class="method-grid">
+          <div class="method-col">
+            <h4>R_disc · discrimination</h4>
+            <p>Reward the test generator when its tests successfully flag code solutions drawn from the code generator while still passing the ground-truth code. This drives tests toward sharp, discriminative edge cases.</p>
+          </div>
+          <div class="method-col">
+            <h4>R_valid · validity (clipped)</h4>
+            <p>Reward functional correctness of test cases, but clip the denominator at <code>τ</code> so the model cannot game the reward by emitting 2–3 trivial tests copied from the prompt.</p>
+          </div>
+        </div>
+
+        <figure>
+          <img src="assets/imgs/discrimination_reward.png" alt="Discrimination reward" style="max-width: 88%;" />
+          <div class="caption">Discrimination reward: invalid tests are filtered by the GT solution, then the reward counts how many sampled code solutions fail at least one surviving test.</div>
+        </figure>
+
+        <h3>The adversarial loop</h3>
         <p>
-          High-quality tests must do more than execute successfully: they should detect subtle faults
-          and reliably separate better code solutions from near-correct ones.
-          Therefore, unit test generation is an open-ended task with no single fixed answer.
-          Moreover, while code solutions can be collected at large scale from diverse LLM instruction-tuning datasets,
-          <strong style="font-weight: 500">high-quality unit tests</strong> are typically not available at scale.
+          The two generators alternate. Each iteration, the <b>code generator</b> is pushed to produce solutions harder to distinguish from ground truth, and the <b>test generator</b> is pushed to invent increasingly precise failure modes. Iteration 2's discrimination reward starts 25 points <em>below</em> iteration 1's saturation level — confirming the code generator genuinely improved — and then climbs back up as tests adapt.
         </p>
-        <p>
-          If we can reliably define rewards for arbitrary unit tests, RL can be more suitable for training LLMs for unit test generation
-          than learning to imitate reference unit tests.
-          Based on this idea, we propose <strong style="font-weight: 500">UTRL</strong>, an adversarial reinforcement learning framework in which
-          a unit test generator and a code generator are trained to provide reliable reward signals to each other.
-        </p>
+
+        <figure>
+          <img src="assets/imgs/algorithm_table.png" alt="UTRL algorithm" style="max-width: 88%;" />
+          <div class="caption">UTRL alternates between training the unit test generator (Step 1) and the code generator (Step 2).</div>
+        </figure>
       </section>
 
+      <!-- ===== EXPERIMENTS ===== -->
       <section>
-        <h2>Method</h2>
+        <h2><span class="h2-num">02</span>Experiments</h2>
         <hr />
-
-        <p>
-          Our key insight is on defining rewards for unit test generation based on relationships between unit test generation and code generation.
-        </p>
-        <p>
-          In perspective of a code generation, the generated code should pass entire test cases in the unit test. Otherwise, in perspective of a unit test generation,
-          the generated unit test should be able to detect subtle errors in arbitrary code solutions, and at the same time, each test case in the unit test should be functionally correct and executable.
-        </p>
-        <p>
-          Inspired by this relationship, we train unit test generator and code generator in adversarial manner, where (1) the unit test generator is trained to generate unit tests that effectively reveal faults in the code solutions produced by the code generator; and (2) the code generator is trained to maximize a code reward, en-
-          couraging it to produce solutions that pass the unit tests generated by the unit test generator.
-          In the following section, we provide details of the rewards for training unit test generator, where we utilize the weighted sum of two reward temrs: 
-          <b>discrimination reward</b> and <b>validity reward</b>.
+        <p style="color: var(--ink-soft); font-size: 15.5px;">
+          We evaluate on 945 competitive programming tasks from TACO and 511 from LiveCodeBench-v2. Unit test quality is measured by <b>Best-of-N improvement</b> (does the test rank good code higher?) and <b>unit test fidelity</b> (does it replicate GT evaluation?).
         </p>
 
-        <h3>Discrimination reward</h3>
-        <p>
-          This reward measures whether generated unit tests can distinguish generated code solutions
-          (sampled from a code generator LLM) from ground-truth solutions. In short, it quantifies
-          how well tests expose subtle errors across multiple candidate code solutions generated by code generator LLMs.
-        </p>
-        <p>
-          Example figure below illustrates the process of computing discrimination reward w.r.t generated unit test.
-          The unit test consists of multiple test cases (5 test cases in the example), and each test case is executed against ground-truth code solution C*.
-          If a test case passes under the ground-truth code solution (test case 1, 3, 5 in the example), it is considered a valid test case. 
-          Otherwise, it is considered as a faulty test case (test case 2, 4 in the example), and it is discarded for discrimination reward computation.
-          As a next step, discrimination reward computes how many LLM-generated code solutions (C1 ~ C6 in the example) are failed by at least one valid test case (test case 1, 3, 5 in the example) in the unit test.
-          In the figure, as C1, C3, C4, C5 are failed by at least one valid test case, discrimination reward is computed as 4/6.
-        </p>
-        <figure class="figure" style="text-align: center">
-          <img
-            src="assets/imgs/discrimination_reward.png"
-            alt="Discrimination reward"
-            style="max-width: 85%; height: auto; margin-top: 0.75em; margin-bottom: 0em"
-          />
-          <figcaption class="caption" style="text-align: center">
-            Discrimination reward illustration.
-          </figcaption>
-        </figure>
+        <!-- Q1 -->
+        <div class="q-card">
+          <div class="q-head">
+            <div class="q-tag">Q1 · Unit test quality</div>
+            <div class="q-title">Does UTRL actually make an LLM better at writing unit tests?</div>
+          </div>
+          <div class="q-body">
+            <p class="q-answer">
+              <b>Yes — and it beats frontier models.</b> A small Qwen3-4B trained with UTRL generates unit tests that surpass GPT-4.1, GPT-4o, and SFT baselines across both evaluation axes.
+            </p>
+            <ul class="q-points">
+              <li>
+                <b>Over base model:</b> Best-of-N code score on Qwen3-8B jumps from <span class="hl">0.430</span> → <span class="hl">0.578</span> (+34%). Code accuracy: <span class="hl">9.8% → 14.9%</span>.
+              </li>
+              <li>
+                <b>Over frontier LLMs:</b> UTRL-4B unit tests beat <span class="hl">GPT-4.1 (0.537)</span> and <span class="hl">GPT-4o (0.474)</span> — despite being 4B parameters.
+              </li>
+              <li>
+                <b>Over SFT baselines:</b> SFT on human-written unit tests reaches 0.458; SFT on teacher-distilled reasoning+tests reaches only <span class="hl">0.566 fidelity</span> vs UTRL's <span class="hl">0.794</span>. Memorizing labels underperforms learning to discriminate.
+              </li>
+            </ul>
+            <figure>
+              <img src="assets/imgs/best_of_n_improvement.png" alt="Best-of-N improvement across unit test generators" />
+              <div class="caption">Best-of-N selection using generated unit tests as evaluators. UTRL (green) dominates across 4 different code generators.</div>
+            </figure>
+          </div>
+        </div>
 
-        <h3>Validity reward</h3>
-        <p>
-          This reward measures how many generated test cases are functionally correct.
-          It is computed by executing each test cases in the generated unit tests against the ground-truth code solution, and checking whether the test case can be executed successfully without runtime errors and failed assertions.
-          This reward encourages the unit test generator to produce functionally correct and executable test cases, which are essential for reliable code evaluation.
-        </p>
-        <p>
-          However, we observe that defining validity reward as the ratio of valid test cases among the entire test cases leads to bias the model to generate unit tests with small number of valid test cases (e.g., 2~3 trivial test cases provided in the problem description).
-          Therefore, we introduce additional clipping term in computing validity reward.
-          Specifically, We clip the denominator of the validity reward, which ensures that unit tests with fewer than specific number of (\tau) test cases receive a validity reward proportional to the absolute number of valid test cases,
-          thereby preventing the unit tests with a small number of trivial test cases from receiving high validity rewards.
-        </p>
-        <figure class="figure" style="text-align: center">
-          <img
-            src="assets/imgs/validity_reward.png"
-            alt="Validity reward"
-            style="max-width: 50%; height: auto; margin-top: 0.75em; margin-bottom: 0em"
-          />
-          <figcaption class="caption" style="text-align: center">
-            Design of the validity reward.
-          </figcaption>
-        </figure>
+        <!-- Q2 -->
+        <div class="q-card">
+          <div class="q-head">
+            <div class="q-tag">Q2 · Code generator side-effect</div>
+            <div class="q-title">Does the adversarial loop also train a useful code generator?</div>
+          </div>
+          <div class="q-body">
+            <p class="q-answer">
+              <b>Yes — it reaches parity with RL that uses ground-truth unit tests.</b> The code generator trained against UTRL's evolving tests hits <span class="hl">15.3% pass@1</span>, essentially matching the <span class="hl">15.9%</span> upper bound from RL with human-written tests.
+            </p>
+            <ul class="q-points">
+              <li>
+                <b>RL with GPT-4o-generated tests saturates under 12%.</b> A strong-but-static test distribution is not enough — adaptive tests are what drive continued improvement.
+              </li>
+              <li>
+                <b>SFT on ground-truth code collapses to 3.6%</b> pass@1 on unseen eval tasks, showing that direct imitation overfits while adversarial RL generalizes.
+              </li>
+              <li>
+                This means UTRL is a viable path to training code generators <b>even in domains where high-quality unit tests are infeasible to collect</b>.
+              </li>
+            </ul>
+            <figure>
+              <img src="assets/imgs/code_generation.png" alt="Pass@1 accuracy of code generators" style="max-width: 58%;" />
+              <div class="caption">UTRL code generator (green) nearly matches RL with GT unit tests (yellow), and clearly beats both GPT-4o-test RL (blue) and SFT (dashed).</div>
+            </figure>
+          </div>
+        </div>
 
-        <h3>UTRL</h3>
-        <p>
-          Based on these rewards, we alternate between training the unit test generator and the code generator. Unit test generator is optimized to maximize the weighted sum of 
-          discrimination and validity rewards, while code generator is optimized to generated code solutions that can pass the unit tests generated by the unit test generator.
-        </p>
-        <figure class="figure" style="text-align: center">
-          <img
-            src="assets/imgs/algorithm_table.png"
-            alt="UTRL training algorithm table"
-            style="max-width: 85%; height: auto; margin-top: 0.75em; margin-bottom: 0em"
-          />
-          <figcaption class="caption" style="text-align: center">
-            UTRL training algorithm table
-          </figcaption>
-        </figure>
-        <p>
-          By repeating these steps, the code generator produces more higher-quality (near perfect) code solutions, which in turn provide more challenging discrimination task for the unit test generator,
-          rendering the unit test generator learn to generate more higher-quality unit tests.
-        </p>
-      </section>
+        <!-- Q3 -->
+        <div class="q-card">
+          <div class="q-head">
+            <div class="q-tag">Q3 · Generalization</div>
+            <div class="q-title">Does UTRL work on LLM families beyond Qwen?</div>
+          </div>
+          <div class="q-body">
+            <p class="q-answer">
+              <b>Yes.</b> UTRL transfers to Llama-3.1-8B-Instruct with only 50 training steps, lifting its unit test quality well above the instruction-tuned baseline.
+            </p>
+            <ul class="q-points">
+              <li>
+                Best-of-N score on Qwen3-8B code: <span class="hl">0.380 → 0.494</span> (+30%).
+              </li>
+              <li>
+                Code accuracy: <span class="hl">7.7% → 11.9%</span> on Qwen3-8B, <span class="hl">7.8% → 11.6%</span> on Qwen3-4B.
+              </li>
+              <li>
+                The framework is <b>not tied to a specific base model</b> — it relies only on instruction–code pairs and a verifiable reward.
+              </li>
+            </ul>
+          </div>
+        </div>
 
-      <section>
-        <h2>Evaluation Metrics</h2>
-        <hr />
-
-        <p>
-          Ultimately, the quality of a unit test should be judged by how well it captures subtly faulty code.
-          Well-known proxy metrics such as Line Coverage and Mutation Score are useful, but they mainly reflect whether tests touch specific execution paths.
-          They are limited in evaluating whether a test can catch highly subtle failures, such as code solutions that still pass more than 90% of oracle test cases.
-          To enable a more thorough evaluation of generated unit tests, we propose two metrics for LLM-generated unit tests.
-        </p>
-
-        <h3>1. Best-of-N Improvement</h3>
-        <p>
-          We sample candidate code solutions with diverse code LLMs (Qwen3-4B, 8B, 14B, GPT-4o)
-          using 32-shot generation. For each task, we use generated unit tests to select a single best candidate,
-          then evaluate that selected code with human-curated oracle unit tests.
-          This metric captures how well generated tests identify high-quality solutions in practice.
-        </p>
-
-        <h3>2. Unit Test Fidelity</h3>
-        <p>
-          Unit Test Fidelity measures alignment between scores induced by generated unit tests
-          and scores induced by human-curated unit tests.
-          For each problem, we collect score vectors over hundreds of sampled code solutions,
-          then compute Spearman's \(R\) between the oracle-score vector and the generated-test score vector.
-          Higher correlation indicates that generated tests induce code evaluation behavior closer to oracle tests.
-        </p>
-      </section>
-
-      <section>
-        <h2>Key Results</h2>
-        <hr />
-        <figure class="figure" style="text-align: center">
-          <img
-            src="assets/imgs/best_of_n_improvement.png"
-            alt="Best-of-N improvement"
-            style="max-width: 85%; height: auto; margin-top: 0.75em; margin-bottom: 0em"
-          />
-          <figcaption class="caption" style="text-align: center">
-            Best-of-N improvement.
-          </figcaption>
-        </figure>
-
-        <figure class="figure" style="text-align: center">
-          <img
-            src="assets/imgs/code_generation.png"
-            alt="Code generation improvement with UTRL-generated unit tests"
-            style="max-width: 40%; height: auto; margin-top: 0.75em; margin-bottom: 0em"
-          />
-          <figcaption class="caption" style="text-align: center">
-            Code generation improvement using UTRL-generated unit tests.
-          </figcaption>
-        </figure>
-        <ul>
-          <li>
-            <strong>UTRL surpasses supervised fine-tuning:</strong>
-            Models trained with UTRL (without ground-truth unit tests) generate higher-quality unit tests
-            than models trained with SFT using ground-truth unit tests, showing that learning to detect
-            LLM-generated code solutions is more effective than directly imitating reference tests.
-          </li>
-          <li>
-            <strong>Small models trained via UTRL outperform large closed-source models:</strong>
-            Qwen3-4B trained with UTRL generates higher-quality unit tests than GPT-4o and GPT-4.1,
-            achieving <strong>14.9% accuracy</strong> versus GPT-4o's 10.6% and GPT-4.1's 13.7%
-            (when evaluating Qwen3-8B code generation).
-          </li>
-          <li>
-            <strong>Unit tests from small UTRL models improve larger code generators:</strong>
-            Unit tests generated by UTRL-trained 4B models effectively improve code generation performance
-            of much larger models (e.g., 8B, 14B, and GPT-4o).
-          </li>
-          <li>
-            <strong>Co-evolving test generation and code generation:</strong>
-            When we use unit tests generated by the UTRL-trained unit test generator to run RL for code generation,
-            code generation performance improves substantially. Notably, this setup outperforms code-generation RL
-            trained with unit tests generated by GPT-4o.
-          </li>
-
-        </ul>
-
-        <p>
-          Please check our <a href="https://arxiv.org/abs/2508.21107" target="_blank">paper</a> for more details.
-        </p>
-      </section>
-
-      <section>
-        <h2>BibTeX</h2>
-        <hr />
-        <div id="bibtex">
-          <pre>
-@article{lee2025learning,
-  title={Learning to generate unit test via adversarial reinforcement learning},
-  author={Lee, Dongjun and Hwang, Changho and Lee, Kimin},
-  journal={arXiv preprint arXiv:2508.21107},
-  year={2025}
-}
-          </pre>
+        <!-- Q4 -->
+        <div class="q-card">
+          <div class="q-head">
+            <div class="q-tag">Q4 · Ablation on validity reward</div>
+            <div class="q-title">What happens without the validity reward — or without its clipping?</div>
+          </div>
+          <div class="q-body">
+            <p class="q-answer">
+              <b>Two different failure modes.</b> Validity design matters at least as much as the discrimination signal itself.
+            </p>
+            <ul class="q-points">
+              <li>
+                <b>Drop R_valid entirely:</b> the generator emits tests where <span class="hl-warn">&gt;50% are functionally invalid</span>. Discrimination reward stays high but tests are unreliable as evaluators.
+              </li>
+              <li>
+                <b>Keep R_valid but remove clipping:</b> the generator collapses — it learns to emit only the <span class="hl-warn">2–3 trivial test cases</span> visible in the problem statement to trivially maximize the validity ratio. Coverage dies.
+              </li>
+              <li>
+                <b>Clipped validity (τ = 12):</b> forces the model to keep producing enough tests that a high validity ratio actually reflects real reasoning effort. This is what unlocks the full curriculum.
+              </li>
+            </ul>
+            <figure>
+              <img src="assets/imgs/validity_reward.png" alt="Validity reward design" style="max-width: 42%;" />
+              <div class="caption">Clipped validity reward: denominator is max(|T|, τ), penalizing short-but-valid shortcuts.</div>
+            </figure>
+          </div>
         </div>
       </section>
+
+      <!-- ===== TAKEAWAYS ===== -->
+      <section>
+        <h2><span class="h2-num">03</span>Why this matters</h2>
+        <hr />
+        <p>
+          Unit tests are the dominant verifiable reward in code-focused RL, but they have been a <em>bottleneck</em> — their curation cost limits how far we can scale RL-for-code. UTRL shows that high-quality tests can emerge <b>from the instruction–code data we already have</b>, via adversarial self-play. The same loop also trains a strong code generator as a byproduct.
+        </p>
+        <p>
+          For broader deployment, the recipe is: <b>(i)</b> collect instruction–code pairs (easy), <b>(ii)</b> run UTRL, <b>(iii)</b> use the resulting unit test generator as a verifier for further RL — or as a standalone code evaluator.
+        </p>
+      </section>
+
+      <!-- ===== BIBTEX ===== -->
+      <section>
+        <h2><span class="h2-num">04</span>Citation</h2>
+        <hr />
+        <div id="bibtex">
+          <pre>@article{lee2025learning,
+  title   = {Learning to Generate Unit Test via Adversarial Reinforcement Learning},
+  author  = {Lee, Dongjun and Hwang, Changho and Lee, Kimin},
+  journal = {arXiv preprint arXiv:2508.21107},
+  year    = {2025}
+}</pre>
+        </div>
+      </section>
+
+      <footer>
+        Dongjun Lee · KAIST &nbsp;·&nbsp; <a href="index_prev.html" style="color: var(--ink-mute);">previous page</a>
+      </footer>
     </div>
   </body>
 </html>

@@ -490,22 +490,6 @@
         </div>
       </div>
 
-      <!-- ===== HEADLINE STATS ===== -->
-      <div class="stat-grid">
-        <div class="stat-card">
-          <div class="stat-num">+34.4%</div>
-          <div class="stat-label">Best-of-N score gain over base Qwen3-4B unit tests</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num">0.794</div>
-          <div class="stat-label">Unit-test fidelity — surpasses GPT-4.1 (0.800 for 14B model)</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num">No labels</div>
-          <div class="stat-label">Zero ground-truth unit tests used during training</div>
-        </div>
-      </div>
-
       <!-- ===== METHOD ===== -->
       <section>
         <h2><span class="h2-num">01</span>Method</h2>
@@ -528,7 +512,11 @@
 
         <figure>
           <img src="assets/imgs/discrimination_reward.png" alt="Discrimination reward" style="max-width: 88%;" />
-          <div class="caption">Discrimination reward: invalid tests are filtered by the GT solution, then the reward counts how many sampled code solutions fail at least one surviving test.</div>
+          <div class="caption">
+            <b>Computing the discrimination reward for a generated unit test <i>T</i>.</b>
+            <b>Step 1.</b> Each test case in <i>T</i> is executed against the ground-truth code <i>C*</i>; only the test cases that pass (here <i>T<sub>1</sub>, T<sub>3</sub>, T<sub>5</sub></i>) are kept as functionally valid, so invalid test cases cannot contaminate the reward.
+            <b>Step 2.</b> <i>M = 6</i> code solutions <i>C<sub>1</sub>…C<sub>6</sub></i> are sampled from the code generator. A code solution is counted as "detected" if it fails at least one valid test case. In this example 4 out of 6 solutions are detected (<i>C<sub>1</sub>, C<sub>3</sub>, C<sub>4</sub>, C<sub>5</sub></i>), giving a discrimination reward of 4 ⁄ 6 = <b>0.667</b>.
+          </div>
         </figure>
 
         <h3>The adversarial loop</h3>
@@ -542,12 +530,40 @@
         </figure>
       </section>
 
+      <!-- ===== EVALUATION METRICS ===== -->
+      <section>
+        <h2><span class="h2-num">02</span>Evaluation metrics for unit tests</h2>
+        <hr />
+        <p>
+          Evaluating a generated unit test is subtle: we want tests that are both <b>discriminative</b> (rank good code above bad code) and <b>comprehensive</b> (behave the way a rigorously curated ground-truth test suite would). We introduce two complementary metrics that probe these two axes separately.
+        </p>
+
+        <div class="method-grid">
+          <div class="method-col">
+            <h4>Metric 1 · Best-of-N improvement</h4>
+            <p><b>Quantifies the discriminativeness of the unit test.</b><br/><br/>
+              <b>Step 1.</b> Sample <i>N</i> candidate code solutions for a given programming task.<br/>
+              <b>Step 2.</b> Use the generated unit test to select the solution that passes the most test cases.<br/>
+              <b>Step 3.</b> Evaluate the selected solution with the human-written ground-truth unit test and report code score / accuracy.
+            </p>
+          </div>
+          <div class="method-col">
+            <h4>Metric 2 · Unit test fidelity</h4>
+            <p><b>Quantifies how closely the generated test replicates GT evaluation.</b><br/><br/>
+              <b>Step 1.</b> Sample <i>N</i> code solutions for a task.<br/>
+              <b>Step 2.</b> Score every solution twice — once with the generated test, once with the GT test — yielding two score vectors.<br/>
+              <b>Step 3.</b> Report Spearman's rank correlation between the two vectors. A higher correlation means the generated test induces the same code ranking as a comprehensive GT suite.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <!-- ===== EXPERIMENTS ===== -->
       <section>
-        <h2><span class="h2-num">02</span>Experiments</h2>
+        <h2><span class="h2-num">03</span>Experiments</h2>
         <hr />
         <p style="color: var(--ink-soft); font-size: 15.5px;">
-          We evaluate on 945 competitive programming tasks from TACO and 511 from LiveCodeBench-v2. Unit test quality is measured by <b>Best-of-N improvement</b> (does the test rank good code higher?) and <b>unit test fidelity</b> (does it replicate GT evaluation?).
+          We evaluate on 945 competitive programming tasks from TACO and 511 from LiveCodeBench-v2, using the two metrics above.
         </p>
 
         <!-- Q1 -->
@@ -568,12 +584,23 @@
                 <b>Over frontier LLMs:</b> UTRL-4B unit tests beat <span class="hl">GPT-4.1 (0.537)</span> and <span class="hl">GPT-4o (0.474)</span> — despite being 4B parameters.
               </li>
               <li>
-                <b>Over SFT baselines:</b> SFT on human-written unit tests reaches 0.458; SFT on teacher-distilled reasoning+tests reaches only <span class="hl">0.566 fidelity</span> vs UTRL's <span class="hl">0.794</span>. Memorizing labels underperforms learning to discriminate.
+                <b>Over SFT baselines:</b> SFT on human-written unit tests reaches 0.458 Best-of-N score, and SFT on teacher-distilled reasoning+tests still lags behind. RL generalizes where SFT memorizes.
+              </li>
+              <li>
+                <b>Unit test fidelity:</b> UTRL-4B reaches <span class="hl">0.794</span>, and UTRL-14B reaches <span class="hl">0.827</span> — both surpassing GPT-4.1 (0.800) and far above SFT-with-GT-tests (0.566).
               </li>
             </ul>
             <figure>
               <img src="assets/imgs/best_of_n_improvement.png" alt="Best-of-N improvement across unit test generators" />
               <div class="caption">Best-of-N selection using generated unit tests as evaluators. UTRL (green) dominates across 4 different code generators.</div>
+            </figure>
+            <figure>
+              <img src="assets/comparison_to_sft.png" alt="Comparison against SFT baselines" />
+              <div class="caption">Head-to-head against SFT baselines. UTRL outperforms both SFT on ground-truth unit tests (D<sub>UT</sub>) and SFT on teacher-distilled reasoning+tests (D<sub>reason+UT</sub>) in both Best-of-N improvement and unit test fidelity — without ever using unit test labels.</div>
+            </figure>
+            <figure>
+              <img src="assets/ut_fidelity.png" alt="Unit test fidelity comparison" />
+              <div class="caption">Unit test fidelity (Spearman's R with GT evaluation). UTRL-trained models produce tests that rank code in the same order as rigorously curated GT tests, surpassing GPT-4.1.</div>
             </figure>
           </div>
         </div>
@@ -609,7 +636,63 @@
         <!-- Q3 -->
         <div class="q-card">
           <div class="q-head">
-            <div class="q-tag">Q3 · Generalization</div>
+            <div class="q-tag">Q3 · Ablation on validity reward</div>
+            <div class="q-title">What happens without the validity reward — or without its clipping?</div>
+          </div>
+          <div class="q-body">
+            <p class="q-answer">
+              <b>Two different failure modes.</b> Validity design matters at least as much as the discrimination signal itself.
+            </p>
+            <ul class="q-points">
+              <li>
+                <b>Drop R_valid entirely:</b> the generator emits tests where <span class="hl-warn">&gt;50% are functionally invalid</span>. Discrimination reward stays high but tests are unreliable as evaluators.
+              </li>
+              <li>
+                <b>Keep R_valid but remove clipping:</b> the generator collapses — it learns to emit only the <span class="hl-warn">2–3 trivial test cases</span> visible in the problem statement to trivially maximize the validity ratio. Coverage dies.
+              </li>
+              <li>
+                <b>Clipped validity (τ = 12):</b> forces the model to keep producing enough tests that a high validity ratio actually reflects real reasoning effort. This is what unlocks the full curriculum.
+              </li>
+            </ul>
+            <figure>
+              <img src="assets/ablating_validity_reward.png" alt="Ablation on validity reward" />
+              <div class="caption">Effect of the validity reward and its clipped denominator. Without R<sub>valid</sub>, the generated tests are riddled with invalid cases; without clipping, the model collapses to just a few trivial tests. The full UTRL design keeps both count and validity high.</div>
+            </figure>
+          </div>
+        </div>
+
+        <!-- Q4 · Iterative training -->
+        <div class="q-card">
+          <div class="q-head">
+            <div class="q-tag">Q4 · Iterative training</div>
+            <div class="q-title">Does alternating between the two generators keep producing gains?</div>
+          </div>
+          <div class="q-body">
+            <p class="q-answer">
+              <b>Yes — iteration 2 produces a harder curriculum.</b> In iteration 1, the test generator saturates against the initial code distribution. Training the code generator against those tests makes its outputs harder to distinguish from ground truth, which <b>reopens</b> the discrimination problem for the next iteration.
+            </p>
+            <ul class="q-points">
+              <li>
+                <b>Iteration 1 saturates.</b> Trained against the initial code generator, the discrimination reward plateaus around <span class="hl">0.626</span> after ~50 steps with only a ~0.02 gain — the test generator has learned everything it can from easy code.
+              </li>
+              <li>
+                <b>Iteration 2 starts harder.</b> After the code generator is updated via RL against iteration 1's tests, its outputs are substantially closer to ground truth. Re-evaluating on this new distribution, the discrimination reward drops from 0.626 to <span class="hl">0.375</span> — a real, measurable increase in difficulty.
+              </li>
+              <li>
+                <b>The test generator recovers — on a harder task.</b> Continued training lifts the reward from 0.375 to <span class="hl">0.447</span>, and the resulting iteration-2 tests yield better Best-of-N performance than iteration 1, even surpassing GPT-4.1.
+              </li>
+            </ul>
+            <figure>
+              <img src="assets/effect_of_iterative_training.png" alt="Effect of iterative training on discrimination reward" />
+              <div class="caption">Discrimination reward across iterations. Iteration 1 saturates quickly; after updating the code generator, iteration 2 starts from a <em>lower</em> reward (harder task) and climbs meaningfully — evidence that the adversarial loop is generating genuine curriculum, not just more compute.</div>
+            </figure>
+          </div>
+        </div>
+
+        <!-- Q5 · Generalization to other LLM families -->
+        <div class="q-card">
+          <div class="q-head">
+            <div class="q-tag">Q5 · Generalization</div>
             <div class="q-title">Does UTRL work on LLM families beyond Qwen?</div>
           </div>
           <div class="q-body">
@@ -629,39 +712,11 @@
             </ul>
           </div>
         </div>
-
-        <!-- Q4 -->
-        <div class="q-card">
-          <div class="q-head">
-            <div class="q-tag">Q4 · Ablation on validity reward</div>
-            <div class="q-title">What happens without the validity reward — or without its clipping?</div>
-          </div>
-          <div class="q-body">
-            <p class="q-answer">
-              <b>Two different failure modes.</b> Validity design matters at least as much as the discrimination signal itself.
-            </p>
-            <ul class="q-points">
-              <li>
-                <b>Drop R_valid entirely:</b> the generator emits tests where <span class="hl-warn">&gt;50% are functionally invalid</span>. Discrimination reward stays high but tests are unreliable as evaluators.
-              </li>
-              <li>
-                <b>Keep R_valid but remove clipping:</b> the generator collapses — it learns to emit only the <span class="hl-warn">2–3 trivial test cases</span> visible in the problem statement to trivially maximize the validity ratio. Coverage dies.
-              </li>
-              <li>
-                <b>Clipped validity (τ = 12):</b> forces the model to keep producing enough tests that a high validity ratio actually reflects real reasoning effort. This is what unlocks the full curriculum.
-              </li>
-            </ul>
-            <figure>
-              <img src="assets/imgs/validity_reward.png" alt="Validity reward design" style="max-width: 42%;" />
-              <div class="caption">Clipped validity reward: denominator is max(|T|, τ), penalizing short-but-valid shortcuts.</div>
-            </figure>
-          </div>
-        </div>
       </section>
 
       <!-- ===== TAKEAWAYS ===== -->
       <section>
-        <h2><span class="h2-num">03</span>Why this matters</h2>
+        <h2><span class="h2-num">04</span>Why this matters</h2>
         <hr />
         <p>
           Unit tests are the dominant verifiable reward in code-focused RL, but they have been a <em>bottleneck</em> — their curation cost limits how far we can scale RL-for-code. UTRL shows that high-quality tests can emerge <b>from the instruction–code data we already have</b>, via adversarial self-play. The same loop also trains a strong code generator as a byproduct.
@@ -673,7 +728,7 @@
 
       <!-- ===== BIBTEX ===== -->
       <section>
-        <h2><span class="h2-num">04</span>Citation</h2>
+        <h2><span class="h2-num">05</span>Citation</h2>
         <hr />
         <div id="bibtex">
           <pre>@article{lee2025learning,

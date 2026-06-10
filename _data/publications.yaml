@@ -1,7 +1,16 @@
 papers:
+  - title: "[P3] Hierarchical Policies from Verbal and Egocentric Human Signals for Natural Human-Robot Interaction"
+    authors: "<b><u>Dongjun Lee</u><sup style='position: relative; top: 7px; font-size: 1.9em;'>*</sup></b>, <a href='https://choi403.github.io'>Juheon Choi<sup style='position: relative; top: 7px; font-size: 1.9em;'>*</sup></a>, <a>Dong Kyu Shin<sup style='position: relative; top: 7px; font-size: 1.9em;'>*</sup></a>, <a href='https://sinjae.me'>Sinjae Kang</a>, <a href='https://sites.google.com/view/kiminlee/'>Kimin Lee</a>"
+    venue: "Arxiv Preprint"
+    arxiv: "https://arxiv.org/pdf/2606.10276"
+    website: "https://project-edith.github.io"
+    selected: y
+
   - title: "[C4] Learning Multi-View Spatial Reasoning from Cross-View Relations"
     authors: "<a >Suchae Jeong</a>, <a>Jaehwi Song</a>, <a>Haeone Lee</a>, <a>Hanna Kim</a>, <a>Jian Kim</a>, <b><u>Dongjun Lee</u></b>, <a>Dongkyu Shin</a>, <a>Changyeon Kim</a>, <a>Dongyoon Hahm</a>, <a>Woogyeol Jin</a>, <a>Juheon Choi</a>, <a>Kimin Lee</a>"
     venue: "CVPR 2026"
+    arxiv: "https://arxiv.org/pdf/2603.27967"
+    website: "https://cross-view-relations.github.io"
     selected: y
 
   - title: "[C3] Learning to Generate Unit Test via Adversarial Reinforcement Learning"

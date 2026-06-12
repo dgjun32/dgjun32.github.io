@@ -64,7 +64,10 @@ layout: default
     </div>
 
     <div class="tab-pane" id="papers-all">
-      {% for paper in site.data.publications.papers %}
+      {% assign papers_by_year = site.data.publications.papers | group_by: "year" | sort: "name" | reverse %}
+      {% for year_group in papers_by_year %}
+      <h5 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">{{ year_group.name }}</h5>
+      {% for paper in year_group.items %}
       <div class="paper">
         <p class="title"><b>{{ paper.title }}</b></p>
         <p>{{ paper.authors }}</p>
@@ -117,6 +120,7 @@ layout: default
           {% endif %}
         </div>
       </div>
+      {% endfor %}
       {% endfor %}
     </div>
   </div>

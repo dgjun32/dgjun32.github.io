@@ -38,9 +38,9 @@ papers:
     website: "https://lcowiclr2025.github.io"
     selected: y
 
-  - title: "[P2] Collaborative LLM Inference via Planning for Efficient Reasoning"
+  - title: "[J1] Collaborative LLM Inference via Planning for Efficient Reasoning"
     authors: "<a>Byeongchan Lee</a>, <a>Jonghoon Lee</a>, <a>Dongyoung Kim</a>, <a>Jaehyung Kim</a>, <a>Kyungjoon Park</a>, <b><u>Dongjun Lee</u></b>, <a>Jinwoo Shin</a>"
-    venue: "Arxiv Preprint"
+    venue: "TMLR"
     year: 2025
     arxiv: "https://arxiv.org/abs/2506.11578"
 

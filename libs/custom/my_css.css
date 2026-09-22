@@ -21,6 +21,15 @@ h4 {
   color: #646464;
   font-size: 40px; /*22px*/
   margin-top: 5px; }
+.x-icon {
+  width: 0.875em;
+  height: 1em;
+  fill: currentColor;
+  vertical-align: -0.125em; }
+.main-description .x-icon {
+  color: #646464;
+  font-size: 40px;
+  margin-top: 5px; }
 .paper {
     margin-bottom: 20px }
 .paper .title {
@@ -270,7 +279,8 @@ a:hover {
   color: var(--link-hover);
 }
 
-.main-description .fa {
+.main-description .fa,
+.main-description .x-icon {
   color: var(--muted);
 }
 

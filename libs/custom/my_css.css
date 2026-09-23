@@ -32,6 +32,30 @@ h4 {
   margin-top: 5px; }
 .paper {
     margin-bottom: 20px }
+.paper-featured {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px; }
+.paper-thumb {
+  flex: 0 0 180px;
+  width: 180px; }
+.paper-thumb img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--border, #eee);
+  display: block; }
+.paper-info {
+  flex: 1 1 auto;
+  min-width: 0; }
+@media (max-width: 550px) {
+  .paper-featured {
+    flex-direction: column;
+    gap: 10px; }
+  .paper-thumb {
+    flex: 0 0 auto;
+    width: 100%; } }
 .paper .title {
   /*text-transform: uppercase; */}
 .exp-item {

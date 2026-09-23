@@ -28,7 +28,13 @@ layout: default
     <div class="tab-pane active" id="papers-selected">
       {% assign selected_papers = site.data.publications.papers | where:
       "selected", "y" %} {% for paper in selected_papers %}
-      <div class="paper">
+      <div class="paper paper-featured">
+        {% if paper.thumbnail %}
+        <div class="paper-thumb">
+          <img src="{{ paper.thumbnail | prepend: site.baseurl }}" alt="{{ paper.title }} teaser" loading="lazy">
+        </div>
+        {% endif %}
+        <div class="paper-info">
         <p class="title"><b>{{ paper.title }}</b></p>
         <p>{{ paper.authors }}</p>
         <p><i>{{ paper.venue }}</i></p>
@@ -57,6 +63,7 @@ layout: default
           {% endif %} {% if paper.data %}
           <a class="button" href="{{ paper.data }}" target="_blank">Data</a>
           {% endif %}
+        </div>
         </div>
       </div>
       {% endfor %}
@@ -125,32 +132,6 @@ layout: default
   </div>
 </div>
 
-<!-- ========== Education ========== -->
-<div class="docs-section" id="education">
-  <h4>Education</h4>
-  <div class="paper">
-    <p class="title">
-      <b>Korea Advanced Institute of Science and Technology (KAIST)<b
-          style="float: right"
-          >Mar. 2024 - Present</b
-         ></b
-      >
-    </p>
-    <p>Ph.D. in Artificial Intelligence</p>
-  </div>
-  <div class="paper">
-    <p class="title">
-      <b
-        >Korea University<b
-          style="float: right"
-          >Mar. 2018 - Feb. 2024</b
-        ></b
-      >
-    </p>
-    <p>B.S. in Statistics & Artificial Intelligence</p>
-  </div>
-</div>
-
 <!-- ========== Experience ========== -->
 <div class="docs-section" id="experience">
   <h4>Experience</h4>
@@ -182,15 +163,6 @@ layout: default
   </div>
 
   <div class="paper exp-item">
-    <img class="exp-logo" src="{{ '/assets/logos/microsoft.png' | prepend: site.baseurl }}" alt="Microsoft logo">
-    <div class="exp-body">
-      <p class="title"><b>Microsoft Research</b></p>
-      <a>Research intern</a>
-    </div>
-    <div class="exp-meta">Sep. 2024 - Feb. 2025<br>Beijing, China</div>
-  </div>
-
-  <div class="paper exp-item">
     <img class="exp-logo" src="{{ '/assets/logos/naver.png' | prepend: site.baseurl }}" alt="NAVER logo">
     <div class="exp-body">
       <p class="title"><b>NAVER Corp</b></p>
@@ -199,6 +171,32 @@ layout: default
     <div class="exp-meta">Jun. 2023 - Aug. 2023<br>Jeongja, Korea</div>
   </div>
 
+</div>
+
+<!-- ========== Education ========== -->
+<div class="docs-section" id="education">
+  <h4>Education</h4>
+  <div class="paper">
+    <p class="title">
+      <b>Korea Advanced Institute of Science and Technology (KAIST)<b
+          style="float: right"
+          >Mar. 2024 - Present</b
+         ></b
+      >
+    </p>
+    <p>Ph.D. in Artificial Intelligence</p>
+  </div>
+  <div class="paper">
+    <p class="title">
+      <b
+        >Korea University<b
+          style="float: right"
+          >Mar. 2018 - Feb. 2024</b
+        ></b
+      >
+    </p>
+    <p>B.S. in Statistics & Artificial Intelligence</p>
+  </div>
 </div>
 
 <!-- ========== Academic Services ========== -->

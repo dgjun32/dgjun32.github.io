@@ -1,7 +1,7 @@
 papers:
-  - title: "[P3] EDITH: Teaching Robots to Follow Nonverbal Human Intent from Egocentric Vision and Gaze"
+  - title: "[W2] EDITH: Teaching Robots to Follow Nonverbal Human Intent from Egocentric Vision and Gaze"
     authors: "<b><u>Dongjun Lee</u><sup style='position: relative; top: 7px; font-size: 1.9em;'>*</sup></b>, <a href='https://choi403.github.io'>Juheon Choi<sup style='position: relative; top: 7px; font-size: 1.9em;'>*</sup></a>, <a>Dong Kyu Shin<sup style='position: relative; top: 7px; font-size: 1.9em;'>*</sup></a>, <a href='https://sinjae.me'>Sinjae Kang</a>, <a href='https://sites.google.com/view/kiminlee/'>Kimin Lee</a>"
-    venue: "Arxiv Preprint"
+    venue: "IROS 2026 Workshop on Human-Robot Dialogue"
     year: 2026
     arxiv: "https://arxiv.org/pdf/2606.10276"
     website: "https://project-edith.github.io"

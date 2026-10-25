@@ -1,0 +1,30 @@
+{% assign p = include.paper %}
+{% comment %} Papers where Dongjun is (co-)first author get the highlight background. {% endcomment %}
+{% assign is_first = false %}
+{% if p.authors contains '<b><u>Dongjun Lee</u>' %}
+  {% assign head = p.authors | split: '</b>' | first %}
+  {% if head contains 'Dongjun Lee' %}{% assign is_first = true %}{% endif %}
+{% endif %}
+<div class="pub{% if is_first %} pub-hl{% endif %}">
+  {% if p.thumbnail %}
+  <div class="pub-thumb">
+    <img src="{{ p.thumbnail | prepend: site.baseurl }}" alt="{{ p.title }} teaser" loading="lazy">
+  </div>
+  {% endif %}
+  <div class="pub-body">
+    <div class="pub-title">{{ p.title }}</div>
+    <div class="authors">{{ p.authors }}</div>
+    <div class="venue"><em>{{ p.venue }}</em></div>
+    {% if p.venue2 %}<div class="venue"><em>{{ p.venue2 }}</em></div>{% endif %}
+    <div class="pub-buttons">
+      {% if p.website %}<a href="{{ p.website | prepend: site.baseurl }}" target="_blank" rel="noopener">project website</a>{% endif %}
+      {% if p.arxiv %}<a href="{{ p.arxiv }}" target="_blank" rel="noopener">paper (arxiv)</a>{% endif %}
+      {% if p.paper_pdf %}<a href="{{ p.paper_pdf | prepend: site.baseurl }}" target="_blank" rel="noopener">paper</a>{% endif %}
+      {% if p.code %}<a href="{{ p.code }}" target="_blank" rel="noopener">code</a>{% endif %}
+      {% if p.slides %}<a href="{{ p.slides | prepend: site.baseurl }}" target="_blank" rel="noopener">slides</a>{% endif %}
+      {% if p.poster %}<a href="{{ p.poster | prepend: site.baseurl }}" target="_blank" rel="noopener">poster</a>{% endif %}
+      {% if p.video %}<a href="{{ p.video }}" target="_blank" rel="noopener">video</a>{% endif %}
+      {% if p.data %}<a href="{{ p.data }}" target="_blank" rel="noopener">data</a>{% endif %}
+    </div>
+  </div>
+</div>

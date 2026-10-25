@@ -2,130 +2,65 @@
 layout: default
 ---
 
-<!-- ========== About ========== -->
-<div class="docs-section" id="about">
-  <h4>About</h4>
-  <p>
-    I am a 3rd year Ph.D. student at <a href="https://www.kaist.ac.kr/en/">KAIST</a>, advised by Prof.
-    <a href="https://sites.google.com/view/kiminlee/">Kimin Lee</a>, and currently a visiting scholar at New York University collaborating with Prof.<a href="https://mengyeren.com"> Mengye Ren</a>.
-    My research goal is to build an embodied agent that can interact with humans over long horizons reliably and safely.
-    To this end, I work on robot learning and human-robot interaction, focusing on model architectures, scalable data pipeline, and agentic frameworks for natural and reactive interaction with humans.
-  </p>
+<!-- ========== Intro ========== -->
+<div class="intro">
+  <div class="intro-text">
+    <p class="intro-name">
+      <span class="name">{{ site.data.main_info.name }}</span>
+      <span class="intro-role">{{ site.data.main_info.title }}, {{ site.data.main_info.dept }}</span>
+    </p>
+    <p>
+      I am a Ph.D. student at <a href="https://www.kaist.ac.kr/en/">KAIST</a>, advised by Prof.
+      <a href="https://sites.google.com/view/kiminlee/">Kimin Lee</a>, and currently a visiting scholar at
+      New York University collaborating with Prof. <a href="https://mengyeren.com">Mengye Ren</a>.
+      Previously, I interned at Config, and also interned at Microsoft Research.
+    </p>
+    <p>
+      My research goal is to build an embodied agent that can interact and collaborate with humans over
+      long horizons reliably and safely. To this end, I work on robot learning and human-robot interaction,
+      focusing on model architectures and scalable data sources for natural and reactive interaction with
+      humans.
+    </p>
+    <p class="intro-links">
+      <a href="{{ site.data.main_info.google_scholar }}" target="_blank" rel="noopener">Google Scholar</a> &nbsp;|&nbsp;
+      <a href="{{ site.data.main_info.github }}" target="_blank" rel="noopener">GitHub</a> &nbsp;|&nbsp;
+      <a href="{{ site.data.main_info.linkedin }}" target="_blank" rel="noopener">LinkedIn</a> &nbsp;|&nbsp;
+      <a href="{{ site.data.main_info.twitter }}" target="_blank" rel="noopener">X&nbsp;(Twitter)</a>
+    </p>
+    <p class="intro-links" style="margin-top:8px;color:#8a8a8a;font-size:14px">
+      {{ site.data.main_info.email }}
+    </p>
+  </div>
+  <div class="intro-photo">
+    <div class="photo-frame">
+      <img src="{{ site.baseurl }}{{ site.data.main_info.profile_pic }}" alt="{{ site.data.main_info.name }}">
+    </div>
+  </div>
 </div>
 
-<!-- ========== PUBLICATIONS ========== -->
-<div class="docs-section" id="publications">
-  <h4>Publications</h4>
+<!-- ========== Publications ========== -->
+<div class="section" id="publications">
+  <div class="section-title">Publications<span class="note">* indicates equal contribution</span></div>
 
-  <ul class="tab-nav">
-    <li>
-      <div class="button active" data-ref="#papers-selected">Selected</div>
-    </li>
-    <li><div class="button" data-ref="#papers-all">All</div></li>
-  </ul>
+  <div class="tab-group">
+    <div class="tabs">
+      <button class="tab-btn active" data-target="#papers-selected">Selected</button>
+      <button class="tab-btn" data-target="#papers-all">All</button>
+    </div>
 
-  <div class="tab-content">
     <div class="tab-pane active" id="papers-selected">
-      {% assign selected_papers = site.data.publications.papers | where:
-      "selected", "y" %} {% for paper in selected_papers %}
-      <div class="paper paper-featured">
-        {% if paper.thumbnail %}
-        <div class="paper-thumb">
-          <img src="{{ paper.thumbnail | prepend: site.baseurl }}" alt="{{ paper.title }} teaser" loading="lazy">
-        </div>
-        {% endif %}
-        <div class="paper-info">
-        <p class="title"><b>{{ paper.title }}</b></p>
-        <p>{{ paper.authors }}</p>
-        <p><i>{{ paper.venue }}</i></p>
-        {% if paper.venue2 %}
-        <p><i>{{ paper.venue2 }}</i></p>
-        {% endif %}
-        <div class="paper-buttons">
-          {% if paper.paper_pdf %}
-          <a class="button" href="{{ paper.paper_pdf }}" target="_blank"
-            >Paper</a
-          >
-          {% endif %} {% if paper.arxiv %}
-          <a class="button" href="{{ paper.arxiv }}" target="_blank">Arxiv</a>
-          {% endif %} {% if paper.slides %}
-          <a class="button" href="{{ paper.slides }}" target="_blank">Slides</a>
-          {% endif %} {% if paper.website %}
-          <a class="button" href="{{ paper.website | prepend: site.baseurl }}" target="_blank"
-            >Website</a
-          >
-          {% endif %} {% if paper.poster %}
-          <a class="button" href="{{ paper.poster }}" target="_blank">Poster</a>
-          {% endif %} {% if paper.video %}
-          <a class="button" href="{{ paper.video }}" target="_blank">Video</a>
-          {% endif %} {% if paper.code %}
-          <a class="button" href="{{ paper.code }}" target="_blank">Code</a>
-          {% endif %} {% if paper.data %}
-          <a class="button" href="{{ paper.data }}" target="_blank">Data</a>
-          {% endif %}
-        </div>
-        </div>
-      </div>
+      {% assign selected_papers = site.data.publications.papers | where: "selected", "y" %}
+      {% for paper in selected_papers %}
+        {% include paper_entry.html paper=paper %}
       {% endfor %}
     </div>
 
     <div class="tab-pane" id="papers-all">
       {% assign papers_by_year = site.data.publications.papers | group_by: "year" | sort: "name" | reverse %}
       {% for year_group in papers_by_year %}
-      <h5 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">{{ year_group.name }}</h5>
+      <div class="year-head">{{ year_group.name }}</div>
       {% for paper in year_group.items %}
-      <div class="paper">
-        <p class="title"><b>{{ paper.title }}</b></p>
-        <p>{{ paper.authors }}</p>
-        <p><i>{{ paper.venue }}</i></p>
-        {% if paper.venue2 %}
-        <p><i>{{ paper.venue2 }}</i></p>
-        {% endif %}
-        <div class="paper-buttons">
-          {% if paper.paper_pdf %}
-          <a
-            class="button"
-            href="{{ paper.paper_pdf | prepend: site.baseurl }}"
-            target="_blank"
-            >Paper</a
-          >
-          {% endif %} {% if paper.arxiv %}
-          <a
-            class="button"
-            href="{{ paper.arxiv | prepend: site.baseurl }}"
-            target="_blank"
-            >Arxiv</a
-          >
-          {% endif %} {% if paper.slides %}
-          <a
-            class="button"
-            href="{{ paper.slides | prepend: site.baseurl }}"
-            target="_blank"
-            >Slides</a
-          >
-          {% endif %} {% if paper.website %}
-          <a
-            class="button"
-            href="{{ paper.website | prepend: site.baseurl }}"
-            target="_blank"
-            >Website</a
-          >
-          {% endif %} {% if paper.poster %}
-          <a
-            class="button"
-            href="{{ paper.poster | prepend: site.baseurl }}"
-            target="_blank"
-            >Poster</a
-          >
-          {% endif %} {% if paper.video %}
-          <a class="button" href="{{ paper.video }}" target="_blank">Video</a>
-          {% endif %} {% if paper.code %}
-          <a class="button" href="{{ paper.code }}" target="_blank">Code</a>
-          {% endif %} {% if paper.data %}
-          <a class="button" href="{{ paper.data }}" target="_blank">Data</a>
-          {% endif %}
-        </div>
-      </div>
+        {% include paper_entry.html paper=paper %}
       {% endfor %}
       {% endfor %}
     </div>
@@ -133,106 +68,102 @@ layout: default
 </div>
 
 <!-- ========== Experience ========== -->
-<div class="docs-section" id="experience">
-  <h4>Experience</h4>
-  <div class="paper exp-item">
-    <img class="exp-logo" src="{{ '/assets/logos/nyu.png' | prepend: site.baseurl }}" alt="New York University logo">
-    <div class="exp-body">
-      <p class="title"><b>NYU Courant</b></p>
-      <a>Visiting Scholar (Host: Prof. Mengye Ren)</a>
-    </div>
-    <div class="exp-meta">Sep. 2026 - Present<br>New York, USA</div>
-  </div>
-
-  <div class="paper exp-item">
-    <img class="exp-logo" src="{{ '/assets/logos/config.png' | prepend: site.baseurl }}" alt="Config logo">
-    <div class="exp-body">
-      <p class="title"><b>Config</b></p>
-      <a>Technical intern</a>
-    </div>
-    <div class="exp-meta">Jun. 2026 - Aug. 2026<br>Seoul, Korea</div>
-  </div>
-
-  <div class="paper exp-item">
-    <img class="exp-logo" src="{{ '/assets/logos/microsoft.png' | prepend: site.baseurl }}" alt="Microsoft logo">
-    <div class="exp-body">
-      <p class="title"><b>Microsoft Research</b></p>
-      <a>Research intern</a>
-    </div>
-    <div class="exp-meta">Mar. 2025 - Jun. 2025<br>Vancouver, Canada</div>
-  </div>
-
-  <div class="paper exp-item">
-    <img class="exp-logo" src="{{ '/assets/logos/naver.png' | prepend: site.baseurl }}" alt="NAVER logo">
-    <div class="exp-body">
-      <p class="title"><b>NAVER Corp</b></p>
-      <a>Research intern</a>
-    </div>
-    <div class="exp-meta">Jun. 2023 - Aug. 2023<br>Jeongja, Korea</div>
-  </div>
-
+<div class="section" id="experience">
+  <div class="section-title">Experience</div>
+  <ul class="entries">
+    <li>
+      <img class="entry-logo" src="{{ '/assets/logos/nyu.png' | prepend: site.baseurl }}" alt="NYU logo">
+      <div class="entry-body">
+        <div class="entry-title">NYU Courant</div>
+        <div class="entry-sub">Visiting Scholar (Host: Prof. <a href="https://mengyeren.com" target="_blank" rel="noopener">Mengye Ren</a>)</div>
+      </div>
+      <div class="entry-meta">Sep. 2026 - Present<br>New York, USA</div>
+    </li>
+    <li>
+      <img class="entry-logo" src="{{ '/assets/logos/config.png' | prepend: site.baseurl }}" alt="Config logo">
+      <div class="entry-body">
+        <div class="entry-title">Config</div>
+        <div class="entry-sub">Technical intern</div>
+        <div class="entry-desc">Worked on human-robot interaction data pipelines and human-interactive policy training.</div>
+      </div>
+      <div class="entry-meta">Jun. 2026 - Aug. 2026<br>Seoul, Korea</div>
+    </li>
+    <li>
+      <img class="entry-logo" src="{{ '/assets/logos/microsoft.png' | prepend: site.baseurl }}" alt="Microsoft logo">
+      <div class="entry-body">
+        <div class="entry-title">Microsoft Research</div>
+        <div class="entry-sub">Research intern (Host: <a href="https://chhwang.github.io" target="_blank" rel="noopener">Changho Hwang</a>)</div>
+        <div class="entry-desc">Worked on training LLMs via RL for code and unit test generation.</div>
+      </div>
+      <div class="entry-meta">Mar. 2025 - Jun. 2025<br>Vancouver, Canada</div>
+    </li>
+    <li>
+      <img class="entry-logo" src="{{ '/assets/logos/naver.png' | prepend: site.baseurl }}" alt="NAVER logo">
+      <div class="entry-body">
+        <div class="entry-title">NAVER Corp</div>
+        <div class="entry-sub">Research intern</div>
+        <div class="entry-desc">Worked on vision-language representation learning.</div>
+      </div>
+      <div class="entry-meta">Jun. 2023 - Aug. 2023<br>Jeongja, Korea</div>
+    </li>
+  </ul>
 </div>
 
 <!-- ========== Education ========== -->
-<div class="docs-section" id="education">
-  <h4>Education</h4>
-  <div class="paper">
-    <p class="title">
-      <b>Korea Advanced Institute of Science and Technology (KAIST)<b
-          style="float: right"
-          >Mar. 2024 - Present</b
-         ></b
-      >
-    </p>
-    <p>Ph.D. in Artificial Intelligence</p>
-  </div>
-  <div class="paper">
-    <p class="title">
-      <b
-        >Korea University<b
-          style="float: right"
-          >Mar. 2018 - Feb. 2024</b
-        ></b
-      >
-    </p>
-    <p>B.S. in Statistics & Artificial Intelligence</p>
-  </div>
+<div class="section" id="education">
+  <div class="section-title">Education</div>
+  <ul class="entries">
+    <li>
+      <div class="entry-body">
+        <div class="entry-title">Korea Advanced Institute of Science and Technology (KAIST)</div>
+        <div class="entry-sub">Ph.D. in Artificial Intelligence</div>
+      </div>
+      <div class="entry-meta">Mar. 2024 - Present</div>
+    </li>
+    <li>
+      <div class="entry-body">
+        <div class="entry-title">Korea University</div>
+        <div class="entry-sub">B.S. in Statistics &amp; Artificial Intelligence</div>
+      </div>
+      <div class="entry-meta">Mar. 2018 - Feb. 2024</div>
+    </li>
+  </ul>
 </div>
 
 <!-- ========== Academic Services ========== -->
-<div class="docs-section" id="services">
-  <h4>Academic Services</h4>
-  <div class="paper">
-    <p class="title"><b>Conference Reviewer</b>, ICLR, CVPR, NeurIPS, CoRL</p>
-    <p class="title"><b>Journal Reviewer</b>, Pattern Recognition</p>
-  </div>
+<div class="section" id="services">
+  <div class="section-title">Academic Services</div>
+  <ul class="entries">
+    <li>
+      <div class="entry-body">
+        <div class="entry-sub"><b>Conference Reviewer</b>, ICLR, CVPR, NeurIPS, CoRL, ICRA</div>
+        <div class="entry-sub"><b>Journal Reviewer</b>, Pattern Recognition</div>
+      </div>
+    </li>
+  </ul>
 </div>
 
 <!-- ========== Honors & Awards ========== -->
-<div class="docs-section" id="honors">
-  <h4>Honors & Awards</h4>
-  <div class="paper">
-    <p class="title">
-      <b>Donggyo Talent Award</b>, Surim Foundation<b
-        style="float: right"
-        >Dec. 2023</b
-      >
-    </p>
-  </div>
-  <div class="paper">
-    <p class="title">
-      <b>Ilju Academy and Culture Foundation Scholarship</b>, Ilju Foundation<b
-        style="float: right"
-        >Dec. 2018 ~ Feb. 2024</b
-      >
-    </p>
-  </div>
-  <div class="paper">
-    <p class="title">
-      <b>Semester high honor</b>, Korea University<b
-        style="float: right"
-        >2018S, 2018F, 2019S, 2019F, 2022S, 2022F, 2023S</b
-      >
-    </p>
-  </div>
+<div class="section" id="honors">
+  <div class="section-title">Honors &amp; Awards</div>
+  <ul class="entries">
+    <li>
+      <div class="entry-body">
+        <div class="entry-sub"><b>Donggyo Talent Award</b>, Surim Foundation</div>
+      </div>
+      <div class="entry-meta">Dec. 2023</div>
+    </li>
+    <li>
+      <div class="entry-body">
+        <div class="entry-sub"><b>Ilju Academy and Culture Foundation Scholarship</b>, Ilju Foundation</div>
+      </div>
+      <div class="entry-meta">Dec. 2018 - Feb. 2024</div>
+    </li>
+    <li>
+      <div class="entry-body">
+        <div class="entry-sub"><b>Semester High Honor</b>, Korea University</div>
+      </div>
+      <div class="entry-meta">2018S, 2018F, 2019S,<br>2019F, 2022S, 2022F, 2023S</div>
+    </li>
+  </ul>
 </div>
